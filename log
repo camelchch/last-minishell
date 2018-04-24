@@ -1,0 +1,13 @@
+env tutu=toto env
+setenv tutu toto
+gerer les leaks
+control + D not working
+control + C stop minishell
+SHLVL++ pour chaque sous shell
+
+echo bonjour|
+env -i ./minishell
+exec 1>&- ; ./minishell
+[1]    98595 segmentation fault  ./minishell
+./minishell > toto
+[1]    98997 segmentation fault  ./minishell > toto

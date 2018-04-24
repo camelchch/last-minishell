@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <sys/wait.h>
 
 char	*path_in_sh(char *app, t_sh *table)
@@ -112,13 +113,18 @@ void	child_pro(char **paras, char **env, t_sh *table)
 	{
 		execve(*paras, paras, env);
 		ft_printf("permission denied for this program: %s\n", *paras);
+		exit(0) ;
 	}
 	path = path_in_sh(*paras, table);
 	if (!path)
+	{
 		ft_printf("there is no such program\n");
+		exit(0) ;
+	}
 	else
 	{
 		execve(path, paras, env);
 		ft_printf("permission denied for this program %s\n", *paras);
+		exit(0) ;
 	}
 }
