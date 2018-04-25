@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <signal.h>
 
 char	*path_in_sh(char *app, t_sh *table)
 {
@@ -53,6 +54,20 @@ char	*path_in_sh(char *app, t_sh *table)
   }
   */
 
+void	signal_inh(int sign)
+{
+	if (sign == SIGINT)
+		ft_printf("\n$> ");
+	if (sign == SIGQUIT)
+		exit(0);
+}
+
+void	signal_quith(int sign)
+{
+	(void)sign;
+		kill(SIGQUIT, 0);
+}
+
 void	shell(int ac, char **av, char **env, t_sh *table)
 {
 	char	*line;
@@ -64,6 +79,8 @@ void	shell(int ac, char **av, char **env, t_sh *table)
 	(void)ac;
 	(void)av;
 
+	signal(SIGINT, signal_inh);
+//	signal(SIGQUIT, signal_quith);
 	while(1)
 	{
 		ft_printf("$> ");
@@ -106,7 +123,6 @@ void	each_cmdline(char *cmdline, char **env, t_sh *table)
 void	child_pro(char **paras, char **env, t_sh *table)
 {
 	char	*path;
-	ft_printf("inside child pro00000000\n");
 
 //ft_printf("in child pro function 88888\n");
 	if (!access(*paras, F_OK))

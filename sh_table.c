@@ -6,13 +6,12 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 15:43:03 by saxiao            #+#    #+#             */
-/*   Updated: 2018/03/22 11:55:00 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/04/25 15:15:26 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <dirent.h>
 #include <stdlib.h>
-#include <errno.h>
 #include "minishell.h"
 
 char	*ft_getenv(char **env, char *nm)
