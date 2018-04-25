@@ -87,7 +87,7 @@ void	each_cmdline(char *cmdline, char **env, t_sh *table)
 
 	paras = ft_strsplit(cmdline, ' ');
 	if (is_buildin(*paras))
-		do_build(paras, &env, table);
+		do_build(paras, env, table);
 	else
 	{
 		pid_no = fork();

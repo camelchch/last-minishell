@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/03/22 15:53:39 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/04/25 13:40:28 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,9 @@ char		*get_autoline(t_sh *table);
 char		**path(char **env);
 int			calcu_index(char *name);
 int			is_buildin(char *app);
-void		do_build(char **paras, char ***env, t_sh *table);
-void		put_env(char **env);
+char		**unset_env(char **paras, char **env);
+void		do_build(char **paras, char **env, t_sh *table);
+void		put_env(char **env, char **paras, t_sh *table);
 char		*ft_getenv(char **env, char *name);
 void		init_shtable(t_sh *table, char **path);
 void		shell(int ac, char **av, char **env, t_sh *table);

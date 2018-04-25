@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:19:33 by saxiao            #+#    #+#             */
-/*   Updated: 2018/03/22 17:25:23 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/04/25 13:40:23 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,51 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-void	put_env(char **env)
+void	put_strstr(char **str)
 {
-	while(*env)
-		ft_printf("%s\n", *env++);
+		while(*str)
+			ft_printf("%s\n", *str++);
+}
+
+void	put_env(char **env, char **paras, t_sh *table)
+{
+	char	*new_env[2048];
+	char	**cp;
+	int		i;
+
+	paras++;
+	i = 0;
+	cp = env;
+	new_env[0] = 0;
+	if (!*paras)
+		put_strstr(env);
+	else if (*paras && **paras == '-')
+	{
+		if ((*paras)[1] == 'i')
+		{
+			paras++;
+			while (*paras && ft_strstr(*paras, "="))
+				new_env[i++] = *paras++;
+			new_env[i] = NULL;
+			if (*paras)
+			child_pro(paras, new_env, table);
+		}
+		else if ((*paras)[1] == 'u')
+		{
+			cp  = env;
+			while (*cp)
+				new_env[i++] = *cp++;
+			new_env[i] = NULL;
+	cp = unset_env(paras, new_env);
+			paras = paras + 2;
+			put_strstr(cp);
+			if (*paras)
+			child_pro(paras, cp, table);
+		}
+		else
+			ft_printf("Usage: env [-u name] [-i] [name=value ...] [utlity]\n");
+	}
+
 }
 
 void	put_intable(t_table *in_tab)
