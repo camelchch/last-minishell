@@ -104,7 +104,7 @@ void	each_cmdline(char *cmdline, char **env, t_sh *table)
 
 	paras = ft_strsplit(cmdline, ' ');
 	if (is_buildin(*paras))
-		do_build(paras, env, table);
+		do_build(paras, &env, table);
 	else
 	{
 		pid_no = fork();
@@ -143,4 +143,5 @@ void	child_pro(char **paras, char **env, t_sh *table)
 		ft_printf("permission denied for this program %s\n", *paras);
 		exit(0) ;
 	}
+ft_printf("where is the problem999999999999\n");
 }

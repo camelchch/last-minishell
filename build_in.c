@@ -58,6 +58,7 @@ void	add_env(char ***env, char **paras)
 	char	*temp;
 
 	i = 0;
+	ft_printf("*paras=%s\n",*paras);
 	//put_env(*env);
 	ct = nb_str(*env) + 2;
 
@@ -191,10 +192,10 @@ char	**unset_env(char **paras, char **env)
 	return (env);
 }
 
-void	do_build(char **paras, char **env, t_sh *table)
+void	do_build(char **paras, char ***env, t_sh *table)
 {
 	if (!ft_strcmp(*paras, "cd"))
-		cd(paras, &env);
+		cd(paras, env);
 	else if (!ft_strcmp(*paras, "echo"))
 		echo(paras);
 	//else if (!ft_strcmp(*paras, "pwd"))
@@ -202,14 +203,14 @@ void	do_build(char **paras, char **env, t_sh *table)
 	else if (!ft_strcmp(*paras, "setenv") || !ft_strcmp(*paras, "unsetenv"))
 	{
 	if (!ft_strcmp(*paras, "unsetenv"))
-		env = unset_env(paras, env);
+		*env = unset_env(paras, *env);
 	else
-		set_env(paras, &env);
+		set_env(paras, env);
 	if (!ft_strcmp(*++paras, "PATH"))
-		init_shtable(table, path(env));
+		init_shtable(table, path(*env));
 	}
 	else if (!ft_strcmp(*paras, "env"))
-		put_env(env, paras, table);
+		put_env(*env, paras, table);
 	else if (!ft_strcmp(*paras, "exit"))
 		ft_exit();
 }

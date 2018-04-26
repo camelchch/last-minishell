@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:19:33 by saxiao            #+#    #+#             */
-/*   Updated: 2018/04/25 14:57:40 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/04/26 14:32:50 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	put_env(char **env, char **paras, t_sh *table)
 				new_env[i++] = *paras++;
 			new_env[i] = NULL;
 			if (*paras)
-			child_pro(paras, new_env, table);
+			pipes(*paras, no_pipe(*paras), new_env, table);
 		}
 		else if ((*paras)[1] == 'u')
 		{
@@ -56,11 +56,17 @@ void	put_env(char **env, char **paras, t_sh *table)
 			paras = paras + 2;
 			put_strstr(cp);
 			if (*paras)
-			child_pro(paras, cp, table);
+			pipes(*paras, no_pipe(*paras), new_env, table);
+			//child_pro(paras, cp, table);
 		}
 		else
 			ft_printf("Usage: env [-u name] [-i] [name=value ...] [utlity]\n");
 	}
+	else
+			pipes(*paras, no_pipe(*paras), env, table);
+			//child_pro(paras, env, table);
+
+
 
 }
 
