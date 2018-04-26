@@ -120,6 +120,43 @@ void	each_cmdline(char *cmdline, char **env, t_sh *table)
 	}
 }
 
+int		is_minishell(char *program)
+{
+	int		i;
+
+	if (ft_strstr(program, "/"))
+	{
+		i = ft_strlen(program) - 1;
+		while (i >= 0 && program[i] != '/')
+			i--;
+		program = program + i + 1;
+	}
+	if (ft_strcmp(program, "minishell"))
+		return (0);
+	return (1);
+}
+
+void	update_shlvl(char ***env)
+{
+	char	**cp;
+	int		level;
+	char	*shlvl[4];
+	char	*lv;
+
+	cp = *env;
+	level = 1;
+	while (*cp && !(!ft_strncmp(*cp, "SHLVL", 5)))
+			cp++;
+	if (*cp)
+		level = ft_atoi(*cp + 6) + 1;
+	lv = ft_itoa(level);
+	shlvl[0] = "no real meaning here";
+	shell[1] = "SHLVL";
+	shlvl[2] = lv;
+	shlvl[3] = NULL;
+	set_env(shlvl, env);
+}
+
 void	child_pro(char **paras, char **env, t_sh *table)
 {
 	char	*path;
@@ -127,7 +164,13 @@ void	child_pro(char **paras, char **env, t_sh *table)
 //ft_printf("in child pro function 88888\n");
 	if (!access(*paras, F_OK))
 	{
+		if (!access(*paras, X_OK))
+		{
+			if (is_minishell(*paras))
+				update_shlvl(env);
+
 		execve(*paras, paras, env);
+
 		ft_printf("permission denied for this program: %s\n", *paras);
 		exit(0) ;
 	}
