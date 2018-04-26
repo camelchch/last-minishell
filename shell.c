@@ -151,7 +151,7 @@ void	update_shlvl(char ***env)
 		level = ft_atoi(*cp + 6) + 1;
 	lv = ft_itoa(level);
 	shlvl[0] = "no real meaning here";
-	shell[1] = "SHLVL";
+	shlvl[1] = "SHLVL";
 	shlvl[2] = lv;
 	shlvl[3] = NULL;
 	set_env(shlvl, env);
@@ -164,13 +164,7 @@ void	child_pro(char **paras, char **env, t_sh *table)
 //ft_printf("in child pro function 88888\n");
 	if (!access(*paras, F_OK))
 	{
-		if (!access(*paras, X_OK))
-		{
-			if (is_minishell(*paras))
-				update_shlvl(env);
-
 		execve(*paras, paras, env);
-
 		ft_printf("permission denied for this program: %s\n", *paras);
 		exit(0) ;
 	}
@@ -186,5 +180,4 @@ void	child_pro(char **paras, char **env, t_sh *table)
 		ft_printf("permission denied for this program %s\n", *paras);
 		exit(0) ;
 	}
-ft_printf("where is the problem999999999999\n");
 }
