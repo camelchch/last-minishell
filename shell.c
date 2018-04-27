@@ -84,7 +84,6 @@ void	shell(int ac, char **av, char **env, t_sh *table)
 //	signal(SIGQUIT, signal_quith);
 	while(1)
 	{
-		if (isatty(1))
 		ft_printf("$> ");
 		//		get_autoline(table);
 		if (get_next_line(1, &line) > 0)
