@@ -41,15 +41,6 @@ void	ft_exit(void)
 }
 
 
-/*void	pwd(void)
-{
-	char	path[PATH_MAX + 1];
-
-	getcwd(path, PATH_MAX + 1);
-	ft_printf("%s\n", path);
-}
-*/
-
 void	add_env(char ***env, char **paras)
 {
 	char	**cp;
@@ -117,40 +108,34 @@ void	set_env(char **paras, char ***env)
 		add_env(env, paras);
 }
 
-int		cd(char **paras, char ***env)
+void	init_tempwd(char **tempwd, int ct, char ***paras, char *path)
 {
-	int		ct;
-	char	*tempwd[4];
-	char	path[PATH_MAX + 1];
-	ct = nb_str(paras);
-	if (ct != 1 && ct != 2)
-		ft_printf("Too many arguments--usage : cd path\n");
-	else
-	{
 	tempwd[0] = "no real meaning here";
 	tempwd[1] = "OLDPWD";
 	tempwd[2] = getcwd(path, PATH_MAX + 1);
 	tempwd[3] = NULL;
 	if (ct == 2)
-	paras++;
+	(*paras)++;
+}
+
+void		oldpwd_home(char **paras, char ***env, int ct)
+{
 	if (ct == 1 || !ft_strcmp(*paras, "~"))
 	{
 		*paras = ft_getenv(*env, "HOME");
 		if (!*paras)
-		{
 		ft_printf("enviroment HOME is not set\n");
-		return (1);
 		}
-		}
-	if (!ft_strcmp(*paras, "-"))
+	else
 	{
 		*paras = ft_getenv(*env, "OLDPWD");
 		if (!*paras)
-		{
 		ft_printf("enviroment OLDPWD  is not set\n");
-		return (1);
 		}
-		}
+}
+
+void	for_cd(char **paras, char ***env, char **tempwd, char *path)
+{
 	if (!chdir(*paras))
 	{
 		set_env(tempwd, env);
@@ -165,6 +150,27 @@ int		cd(char **paras, char ***env)
 		else if (access(*paras, X_OK))
 		ft_printf("permission denied\n");
 	}
+}
+
+int		cd(char **paras, char ***env)
+{
+	int		ct;
+	char	*tempwd[4];
+	char	path[PATH_MAX + 1];
+
+	ct = nb_str(paras);
+	if (ct != 1 && ct != 2)
+		ft_printf("Too many arguments--usage : cd path\n");
+	else
+	{
+		init_tempwd(tempwd, ct, &paras, path);
+	if (ct == 1 || !ft_strcmp(*paras, "~") || !ft_strcmp(*paras, "-"))
+	{
+			oldpwd_home(paras, env, ct);
+			if (!*paras)
+				return (1);
+		}
+	for_cd(paras, env, tempwd, path);
 }
 	return (1);
 }

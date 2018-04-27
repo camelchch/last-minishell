@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:19:33 by saxiao            #+#    #+#             */
-/*   Updated: 2018/04/27 11:02:40 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/04/27 16:50:40 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,43 @@ void	put_strstr(char **str)
 			ft_printf("%s\n", *str++);
 }
 
+void	env_i(char **paras, char **new_env, char ***env, t_sh *table)
+{
+	char	**cp;
+	int		i;
+
+	i = 0;
+		if ((*paras)[1] == 'i')
+		{
+			paras++;
+			while (*paras && ft_strstr(*paras, "="))
+				new_env[i++] = *paras++;
+			new_env[i] = NULL;
+			cp = new_env;
+			if (*paras)
+			pipes(*paras, no_pipe(*paras), &cp, table);
+}
+	 else if ((*paras)[1] == 'u')
+		{
+			cp  = *env;
+			while (*cp)
+				new_env[i++] = *cp++;
+			new_env[i] = NULL;
+	cp = unset_env(paras, new_env);
+			paras = paras + 2;
+			put_strstr(cp);
+			if (*paras)
+			pipes(*paras, no_pipe(*paras), &cp, table);
+		}
+		else
+			ft_printf("Usage: env [-u name] [-i] [name=value ...] [utlity]\n");
+}
+
 void	put_env(char **env, char **paras, t_sh *table)
 {
 	char	*new_env[2048];
-	char	**cp;
+//	char	**cp;
 	int		i;
-	//char	**temp;
 
 	paras++;
 	i = 0;
@@ -37,6 +68,7 @@ void	put_env(char **env, char **paras, t_sh *table)
 		put_strstr(env);
 	else if (*paras && **paras == '-')
 	{
+		/*
 		if ((*paras)[1] == 'i')
 		{
 			paras++;
@@ -58,14 +90,14 @@ void	put_env(char **env, char **paras, t_sh *table)
 			put_strstr(cp);
 			if (*paras)
 			pipes(*paras, no_pipe(*paras), &cp, table);
-			//child_pro(paras, cp, table);
 		}
 		else
 			ft_printf("Usage: env [-u name] [-i] [name=value ...] [utlity]\n");
+			*/
+		env_i(paras, new_env, &env , table);
 	}
 	else
 			pipes(*paras, no_pipe(*paras), &env, table);
-			//child_pro(paras, env, table);
 
 
 

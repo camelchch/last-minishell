@@ -6,11 +6,12 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/04/27 13:19:13 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/04/27 16:51:55 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <limits.h>
+#include <sys/types.h>
 #include "libft/libft.h"
 
 #ifndef MINISHELL_H
@@ -27,6 +28,15 @@ typedef struct	s_shtable
 {
 	t_table		*sh_ta;
 }				t_sh;
+
+typedef struct s_vari
+{
+	int		in;
+	int		num_pipe;
+	int		pipe_fd[2];
+	int		ct;
+	pid_t	pid;
+}			t_vari;
 
 char		*get_autoline(t_sh *table);
 char		**path(char **env);
