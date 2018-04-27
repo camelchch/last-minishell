@@ -79,20 +79,24 @@ void	shell(int ac, char **av, char **env, t_sh *table)
 	(void)ac;
 	(void)av;
 
+	line = NULL;
 	signal(SIGINT, signal_inh);
 //	signal(SIGQUIT, signal_quith);
 	while(1)
 	{
+		if (isatty(1))
 		ft_printf("$> ");
 		//		get_autoline(table);
-		get_next_line(1, &line);
+		if (get_next_line(1, &line) > 0)
+		{
 		cmd = ft_strsplit(line, ';');
 		while (*cmd)
 		{
 			//each_cmdline(*cmd, env, table);
 		//	ft_printf("in shell cmd=%s\n",*cmd);
-			pipes(*cmd, no_pipe(*cmd), env, table);
+			pipes(*cmd, no_pipe(*cmd), &env, table);
 			cmd++;
+		}
 		}
 	}
 }
@@ -157,13 +161,24 @@ void	update_shlvl(char ***env)
 	set_env(shlvl, env);
 }
 
+void	update_lastapp(char *lastcmd, char ***env)
+{
+	char *lastapp[4];
+
+	lastapp[0] = "no real meaning here";
+	lastapp[1] = "_";
+	lastapp[2] = lastcmd;
+	lastapp[3] = NULL;
+	set_env(lastapp, env);
+}
+
 void	child_pro(char **paras, char **env, t_sh *table)
 {
 	char	*path;
 
-//ft_printf("in child pro function 88888\n");
 	if (!access(*paras, F_OK))
 	{
+		update_lastapp(*paras, &env);
 		execve(*paras, paras, env);
 		ft_printf("permission denied for this program: %s\n", *paras);
 		exit(0) ;
@@ -171,11 +186,12 @@ void	child_pro(char **paras, char **env, t_sh *table)
 	path = path_in_sh(*paras, table);
 	if (!path)
 	{
-		ft_printf("there is no such program\n");
+		ft_printf("%s : there is no such program\n", *paras);
 		exit(0) ;
 	}
 	else
 	{
+		update_lastapp(path, &env);
 		execve(path, paras, env);
 		ft_printf("permission denied for this program %s\n", *paras);
 		exit(0) ;

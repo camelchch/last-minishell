@@ -58,8 +58,6 @@ void	add_env(char ***env, char **paras)
 	char	*temp;
 
 	i = 0;
-	ft_printf("*paras=%s\n",*paras);
-	//put_env(*env);
 	ct = nb_str(*env) + 2;
 
 	cp = *env;
@@ -194,6 +192,7 @@ char	**unset_env(char **paras, char **env)
 
 void	do_build(char **paras, char ***env, t_sh *table)
 {
+	update_lastapp(*paras, env);
 	if (!ft_strcmp(*paras, "cd"))
 		cd(paras, env);
 	else if (!ft_strcmp(*paras, "echo"))

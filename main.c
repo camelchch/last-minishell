@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:19:33 by saxiao            #+#    #+#             */
-/*   Updated: 2018/04/26 18:42:13 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/04/27 11:02:40 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ void	put_env(char **env, char **paras, t_sh *table)
 	char	*new_env[2048];
 	char	**cp;
 	int		i;
+	//char	**temp;
 
 	paras++;
 	i = 0;
-	cp = env;
 	new_env[0] = 0;
 	if (!*paras)
 		put_strstr(env);
@@ -43,8 +43,9 @@ void	put_env(char **env, char **paras, t_sh *table)
 			while (*paras && ft_strstr(*paras, "="))
 				new_env[i++] = *paras++;
 			new_env[i] = NULL;
+			cp = new_env;
 			if (*paras)
-			pipes(*paras, no_pipe(*paras), new_env, table);
+			pipes(*paras, no_pipe(*paras), &cp, table);
 		}
 		else if ((*paras)[1] == 'u')
 		{
@@ -56,14 +57,14 @@ void	put_env(char **env, char **paras, t_sh *table)
 			paras = paras + 2;
 			put_strstr(cp);
 			if (*paras)
-			pipes(*paras, no_pipe(*paras), new_env, table);
+			pipes(*paras, no_pipe(*paras), &cp, table);
 			//child_pro(paras, cp, table);
 		}
 		else
 			ft_printf("Usage: env [-u name] [-i] [name=value ...] [utlity]\n");
 	}
 	else
-			pipes(*paras, no_pipe(*paras), env, table);
+			pipes(*paras, no_pipe(*paras), &env, table);
 			//child_pro(paras, env, table);
 
 

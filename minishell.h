@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/04/26 18:42:10 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/04/27 13:19:13 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,11 @@ void		init_shtable(t_sh *table, char **path);
 void		shell(int ac, char **av, char **env, t_sh *table);
 void		child_pro(char **paras, char **env, t_sh *table);
 void		each_cmdline(char *cmdline, char **env, t_sh *table);
-void		pipes(char *cmdline, int nb_pipe, char **env, t_sh *table);
+void		pipes(char *cmdline, int nb_pipe, char ***env, t_sh *table);
 int			no_pipe(char *cmdline);
 void		signal_quith(int sign);
 void		put_strstr(char **str);
 void		set_env(char **paras, char ***env);
 void		update_shlvl(char ***env);
+void		update_lastapp(char *lastcmd, char ***env);
 #endif

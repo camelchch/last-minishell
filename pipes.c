@@ -67,7 +67,7 @@ void	pipes(char	*cmdline, int nb_pipe, char **env, t_sh *table)
 }
 */
 
-void	pipes(char	*cmdline, int nb_pipe, char **env, t_sh *table)
+void	pipes(char	*cmdline, int nb_pipe, char ***env, t_sh *table)
 {
 	char	**cmds;
 	char	**papra;
@@ -81,8 +81,8 @@ void	pipes(char	*cmdline, int nb_pipe, char **env, t_sh *table)
 	in = 0;
 	while (ct <= nb_pipe)
 	{
-	papra = ft_strsplit(cmds[ct], ' ');
-	if (ct == nb_pipe && is_buildin(*ft_strsplit(cmds[ct], ' ')))
+	papra = ft_split(cmds[ct], " \t");
+	if (ct == nb_pipe && *papra && is_buildin(*papra))
 	{
 		if (in)
 		{
@@ -90,7 +90,7 @@ void	pipes(char	*cmdline, int nb_pipe, char **env, t_sh *table)
 		ft_printf("dup2 failed \n");
 		close(in);
 		}
-		do_build(papra, &env, table);
+		do_build(papra, env, table);
 		ct++;
 		}
 	else
@@ -110,10 +110,10 @@ void	pipes(char	*cmdline, int nb_pipe, char **env, t_sh *table)
 		}
 		if (ct != nb_pipe)
 		dup2(pipe_fd[1], 1);
-	if (is_buildin(*ft_strsplit(cmds[ct], ' ')))
-		do_build(papra, &env, table);
+	if (is_buildin(*papra))
+		do_build(papra, env, table);
 	else
-		child_pro(papra, env, table);
+		child_pro(papra, *env, table);
 	}
 	else
 	{
@@ -123,5 +123,5 @@ void	pipes(char	*cmdline, int nb_pipe, char **env, t_sh *table)
 	ct++;
 	}
 	}
-	}
-	}
+}
+}
