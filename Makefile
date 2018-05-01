@@ -19,7 +19,8 @@ NAME = minishell
 #SRC_PATH = srcs
 #INC_PATH = includes
 
-SRC = main.c sh_table.c shell.c build_in.c pipes.c
+SRC = line_edition.c  sh_table.c shell.c build_in.c pipes.c main.c
+#SRC = line_edition.c
 
 LIB_NAME = libft.a
 PRINTF_NAME = libftprintf.a

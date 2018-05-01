@@ -128,6 +128,7 @@ void	put_sh(t_sh *table)
 	}
 }
 
+/*
 int		main(int ac, char **av, char **env)
 {
 	t_sh	table[100];
@@ -144,3 +145,4 @@ int		main(int ac, char **av, char **env)
 //	get_autoline(table);
 	return (0);
 }
+*/
