@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:19:33 by saxiao            #+#    #+#             */
-/*   Updated: 2018/04/27 16:50:40 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/05/02 11:38:54 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,6 @@ void	put_sh(t_sh *table)
 	}
 }
 
-/*
 int		main(int ac, char **av, char **env)
 {
 	t_sh	table[100];
@@ -145,4 +144,3 @@ int		main(int ac, char **av, char **env)
 //	get_autoline(table);
 	return (0);
 }
-*/

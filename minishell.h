@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/04/27 16:51:55 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/05/02 12:28:19 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,15 @@ void		update_lastapp(char *lastcmd, char ***env);
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
 #define MAX_BUF 2048
-#define NB_KEY 3
+#define NB_KEY 5
 #define	ARROW_LEFT 4479771
 #define ARROW_RIGHT 4414235
 #define	ARROW__UP 4283163
 #define ARROW_DOWN 4348699
 #define MY_DELECT 127
+#define MY_HOME 4741915
+#define MY_END 4610843
+#define CT_SHIFT_LEFT 74999712013083
 
 
 typedef struct s_line
@@ -81,12 +84,13 @@ typedef struct s_line
 	int			line_max;
 	int			start_po;
 
-	int			(*printable)(struct s_line *line, size_t a_key);
+	int			(*printable)(struct s_line *line, unsigned long  a_key);
 	int			(*move_left)(struct s_line *line);
 	int			(*move_right)(struct s_line *line);
 	int			(*delete_key)(struct s_line *line);
-//	int			(*move_nleft)(struct s_line *line);
-	int			(*engine)(struct s_line *line, size_t a_key);
+	int			(*move_nleft)(struct s_line *line);
+	int			(*move_nright)(struct s_line *line);
+	int			(*engine)(struct s_line *line, unsigned long a_key);
 }				t_line;
 
 typedef struct s_key

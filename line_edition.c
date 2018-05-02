@@ -74,7 +74,13 @@ void	init_attr(int mod)
  }
  */
 
-int		engine(t_line *line, size_t key)
+int		my_putc(int c)
+{
+	write(1, &c, 1);
+	return (0);
+}
+
+int		engine(t_line *line, unsigned long  key)
 {
 	int		i;
 
@@ -87,7 +93,8 @@ int		engine(t_line *line, size_t key)
 			{ARROW_LEFT, line->move_left},
 			{ARROW_RIGHT, line->move_right},
 			{MY_DELECT, line->delete_key},
-			//	{KEY_LAST, line->move_nright},
+			{MY_END, line->move_nright},
+			{MY_HOME, line->move_nleft},
 			//{KEY_DELECT, line->delete}
 		};
 
@@ -102,6 +109,16 @@ int		engine(t_line *line, size_t key)
 }
 
 
+int		move_left(t_line *line)
+{
+	if (line->pos)
+	{
+		tputs(tgetstr("le", 0), 1, my_putc);
+		line->pos -= 1;
+	}
+	return (0);
+}
+
 int		move_nleft(t_line *line)
 {
 	while (line->pos > 0)
@@ -110,20 +127,20 @@ int		move_nleft(t_line *line)
 	return (0);
 }
 
-
-int		my_putc(int c)
+int		mv_left_word(t_line *line)
 {
-	write(1, &c, 1);
-	return (0);
-}
+	int		left;
 
-int		move_left(t_line *line)
-{
-	if (line->pos)
-	{
-		tputs(tgetstr("le", 0), 1, my_putc);
-		line->pos -= 1;
-	}
+	left = line->pos;
+	if(line->pos == line->buf_len)
+		left = line->buf_len - 1;
+	while (left >= 0 && (line->buf[left_po] == ' ' || line->buf[left] == '\t'))
+		left--;
+	while (left >= 0 && line->buf[left_po] != ' ' && line->buf[left] != '\t')
+		left--;
+	if (left)
+		left--;
+
 
 	return (0);
 }
@@ -161,7 +178,7 @@ int		delete_key(t_line *line)
 	return (0);
 }
 
-int		printable(t_line *line, size_t key)
+int		printable(t_line *line, unsigned long key)
 {
 	int		index;
 
@@ -187,13 +204,14 @@ int		printable(t_line *line, size_t key)
 	return (0);
 }
 
-size_t		get_key()
+unsigned long	get_key()
 {
-	unsigned char	buff[4];
+	unsigned char	buff[6];
 
-	ft_bzero(buff, 4);
-	read(0, buff, 4);
-	return (buff[0] +( buff[1] << 8) + (buff[2] << 16) + (buff[3] << 24));
+	ft_bzero(buff, 6);
+	read(0, buff, 6);
+	return (buff[0] +( buff[1] << 8) + (buff[2] << 16) + (buff[3] << 24) +\
+			((unsigned long)buff[4] << 32) + ((unsigned long)buff[5] << 40));
 }
 
 void	init_line(t_line *line)
@@ -207,6 +225,8 @@ void	init_line(t_line *line)
 	line->printable = printable;
 	line->move_left = move_left;
 	line->move_right = move_right;
+	line->move_nleft = move_nleft;
+	line->move_nright = move_nright;
 	line->delete_key = delete_key;
 	//	line->move_nleft = move_nleft;
 	line->engine = engine;
@@ -216,8 +236,8 @@ void	init_line(t_line *line)
 
 void	get_line(char *new_line)
 {
-	size_t		key;
-	t_line		line;
+	unsigned long	key;
+	t_line			line;
 
 	ft_printf("$> ");
 	init_attr(SETNEW);
