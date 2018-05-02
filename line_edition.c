@@ -95,6 +95,8 @@ int		engine(t_line *line, unsigned long  key)
 			{MY_DELECT, line->delete_key},
 			{MY_END, line->move_nright},
 			{MY_HOME, line->move_nleft},
+			//{CT_SHIFT_LEFT, line->mv_left_word},
+		    {CONTRL_L, line->mv_left_word},
 			//{KEY_DELECT, line->delete}
 		};
 
@@ -134,13 +136,35 @@ int		mv_left_word(t_line *line)
 	left = line->pos;
 	if(line->pos == line->buf_len)
 		left = line->buf_len - 1;
-	while (left >= 0 && (line->buf[left_po] == ' ' || line->buf[left] == '\t'))
+	if (line->pos != line->buf_len &&left && line->buf[left] != ' ' && \
+			line->buf[left] != 't' && (line->buf[left - 1] == ' ' || line->buf[left - 1] == '\t'))
 		left--;
-	while (left >= 0 && line->buf[left_po] != ' ' && line->buf[left] != '\t')
+	while (left > 0 && (line->buf[left] == ' ' || line->buf[left] == '\t'))
+		left--;
+	if (line->buf[left] != ' ' && line->buf[left] != '\t')
+	{
+	while (left > 0 && line->buf[left] != ' ' && line->buf[left] != '\t')
 		left--;
 	if (left)
-		left--;
+		left++;
+	while (line->pos > left)
+		line->move_left(line);
+	}
+	return (0);
+}
 
+int		mv_right_word(t_line *line)
+{
+	int		rt;
+
+	rt = line->pos;
+	if (rt != line->buf_len)
+	{
+		while (rt < line->buf_len && line->buf[rt] != ' ' && line->buf[rt] != '\t')
+			rt++;
+		while (rt < line->buf_len && (line->buf[rt] == ' ' || line->buf[rt] == '\t'))
+			rt++;
+	}
 
 	return (0);
 }
@@ -167,13 +191,16 @@ int		delete_key(t_line *line)
 {
 	int		i;
 
+	if (line->pos)
+	{
 	line->move_left(line);
 	if (line->pos >= 0)
 		tputs(tgetstr("dc", 0), 1, my_putc);
 	i = line->pos - 1;
-	while (++i < line->buf_len - 1)
+	while (++i < line->buf_len)
 		line->buf[i] = line->buf[i + 1];
 	line->buf_len--;
+	}
 
 	return (0);
 }
@@ -228,6 +255,7 @@ void	init_line(t_line *line)
 	line->move_nleft = move_nleft;
 	line->move_nright = move_nright;
 	line->delete_key = delete_key;
+	line->mv_left_word = mv_left_word;
 	//	line->move_nleft = move_nleft;
 	line->engine = engine;
 
