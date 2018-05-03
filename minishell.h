@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/05/02 14:37:08 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/05/03 16:43:44 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void		update_lastapp(char *lastcmd, char ***env);
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
 #define MAX_BUF 2048
-#define NB_KEY 6
+#define NB_KEY 7
 #define	ARROW_LEFT 4479771
 #define ARROW_RIGHT 4414235
 #define	ARROW__UP 4283163
@@ -74,6 +74,7 @@ void		update_lastapp(char *lastcmd, char ***env);
 #define MY_END 4610843
 #define CT_SHIFT_LEFT 74999712013083
 #define CONTRL_L 12
+#define CONTRL_H 8
 
 
 typedef struct s_line
@@ -84,6 +85,8 @@ typedef struct s_line
 	int			buf_len;
 	int			line_max;
 	int			start_po;
+	int			ligne;
+	int			col;
 
 	int			(*printable)(struct s_line *line, unsigned long  a_key);
 	int			(*move_left)(struct s_line *line);
@@ -92,6 +95,7 @@ typedef struct s_line
 	int			(*move_nleft)(struct s_line *line);
 	int			(*move_nright)(struct s_line *line);
 	int			(*mv_left_word)(struct s_line *line);
+	int			(*mv_right_word)(struct s_line *line);
 	int			(*engine)(struct s_line *line, unsigned long a_key);
 }				t_line;
 
@@ -100,6 +104,8 @@ typedef struct s_key
 	unsigned long	a_key;
 	int			(*func)(t_line *);
 }				t_key;
+
+//typedef strucy
 
 unsigned long	get_key();
 int			printable(t_line *line, size_t key);
