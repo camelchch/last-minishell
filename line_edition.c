@@ -11,7 +11,7 @@
 
 #define SETNEW 1
 #define SETOLD 0
-char		**history;
+t_history	*history;
 
 
 void	raw_termi_mode()
@@ -95,8 +95,8 @@ int		engine(t_line *line, unsigned long  key)
 			{MY_DELECT, line->delete_key},
 			{MY_END, line->move_nright},
 			{MY_HOME, line->move_nleft},
-		    {CONTRL_L, line->mv_left_word},
-		    {CONTRL_H, line->mv_right_word},
+			{CONTRL_L, line->mv_left_word},
+			{CONTRL_H, line->mv_right_word},
 			//{KEY_DELECT, line->delete}
 		};
 
@@ -113,9 +113,19 @@ int		engine(t_line *line, unsigned long  key)
 
 int		move_left(t_line *line)
 {
+	int i;
+
+	i = 0;
 	if (line->pos)
 	{
-		tputs(tgetstr("le", 0), 1, my_putc);
+		if ((line->pos + line->start_po) % line->line_max == 0)
+		{
+			tputs(tgetstr("up", 0), 1, my_putc);
+			while (i++ < line->line_max)
+				tputs(tgetstr("nd", 0), 1, my_putc);
+		}
+		else
+			tputs(tgetstr("le", 0), 1, my_putc);
 		line->pos -= 1;
 	}
 	return (0);
@@ -143,12 +153,12 @@ int		mv_left_word(t_line *line)
 		left--;
 	if (line->buf[left] != ' ' && line->buf[left] != '\t')
 	{
-	while (left > 0 && line->buf[left] != ' ' && line->buf[left] != '\t')
-		left--;
-	if (left)
-		left++;
-	while (line->pos > left)
-		line->move_left(line);
+		while (left > 0 && line->buf[left] != ' ' && line->buf[left] != '\t')
+			left--;
+		if (left)
+			left++;
+		while (line->pos > left)
+			line->move_left(line);
 	}
 	return (0);
 }
@@ -175,8 +185,18 @@ int		mv_right_word(t_line *line)
 
 int		move_right(t_line *line)
 {
+	int		i;
+
+	i = line->line_max;
 	if (line->pos < line->buf_len)
 	{
+		if ((line->pos + line->start_po) % line->line_max == line->line_max - 1)
+		{
+			tputs(tgetstr("do", 0), 1, my_putc);
+			while (i-- > 0)
+				tputs(tgetstr("le", 0), 1, my_putc);
+		}
+		else
 		tputs(tgetstr("nd", 0), 1, my_putc);
 		line->pos += 1;
 	}
@@ -197,105 +217,132 @@ int		delete_key(t_line *line)
 
 	if (line->pos)
 	{
-	line->move_left(line);
-	if (line->pos >= 0)
-		tputs(tgetstr("dc", 0), 1, my_putc);
-	i = line->pos - 1;
-	while (++i < line->buf_len)
-		line->buf[i] = line->buf[i + 1];
-	line->buf_len--;
+		line->move_left(line);
+		if (line->pos >= 0)
+			tputs(tgetstr("dc", 0), 1, my_putc);
+		i = line->pos - 1;
+		while (++i < line->buf_len)
+			line->buf[i] = line->buf[i + 1];
+		line->buf_len--;
 	}
 
 	return (0);
 }
 
 /*
-int		printable(t_line *line, unsigned long key)
-{
-	int		index;
+   int		printable(t_line *line, unsigned long key)
+   {
+   int		index;
 
-	if (line->pos == line->buf_len)
-	{
-		(line->buf)[line->buf_len] = key;
-		write(STDOUT_FILENO, line->buf + line-> pos, 1);
-	}
-	else
-	{
-		index = line->buf_len + 1;
-		while (--index > line->pos)
-			line->buf[index] = line->buf[index -1];
-		line->buf[line->pos] = key;
-		write(1, line->buf + line->pos, line->buf_len - line->pos + 1);
-		index = line->buf_len - line->pos + 2;
-		while (--index > 1)
-		{
-			tputs(tgetstr("le", 0), 1, my_putc);
-		}
-	}
-	line->pos++;
-	line->buf_len++;
+   if (line->pos == line->buf_len)
+   {
+   (line->buf)[line->buf_len] = key;
+   write(STDOUT_FILENO, line->buf + line-> pos, 1);
+   }
+   else
+   {
+   index = line->buf_len + 1;
+   while (--index > line->pos)
+   line->buf[index] = line->buf[index -1];
+   line->buf[line->pos] = key;
+   write(1, line->buf + line->pos, line->buf_len - line->pos + 1);
+   index = line->buf_len - line->pos + 2;
+   while (--index > 1)
+   {
+   tputs(tgetstr("le", 0), 1, my_putc);
+   }
+   }
+   line->pos++;
+   line->buf_len++;
 
-	return (0);
-}
-*/
+   return (0);
+   }
+   */
 
 void	put_a_key(t_line *line, unsigned long key)
 {
-	tputs(tgetstr("ic", 0), 1, my_putc);
-	write(1, &key, 1);
-	if ((line->pos + line->start_po + 1) == line->line_max)
-	tputs(tgetstr("nw", 0), 1, my_putc);
+	if ((line->pos  +  1 + line->start_po) % line->line_max == 0)
+	{
+		tputs(tgetstr("ic", 0), 1, my_putc);
+		write(STDOUT_FILENO, &key, 1);
+		tputs(tgetstr("do", 0), 1, my_putc);
+		tputs(tgetstr("cr", 0), 1, my_putc);
+	}
 	else
-	tputs(tgetstr("nd", 0), 1, my_putc);
-
-
+		write(STDOUT_FILENO, &key, 1);
+	line->pos++;
+	line->buf_len++;
 }
 
 int		printable(t_line *line, unsigned long key)
 {
 	int		index;
+	int		positive;
+	int		new_pos;
+	int		new_len;
 
-	//tputs(tgetstr("ic", 0), 1, my_putc);
-	//write(1, &key, 1);
-	//tputs(tgetstr("nw", 0), 1, my_putc);
-	//ft_printf("line_max = %d", line->line_max);
 	if (line->pos == line->buf_len)
 	{
-		(line->buf)[line->buf_len] = key;
-	if ((line->pos + line->start_po) == line->line_max)
-	{
-//	tputs(tgetstr("nw", 0), 1, my_putc);
-//	tputs(tgetstr("am", 0), 1, my_putc);
-	tputs(tgetstr("ic", 0), 1, my_putc);
-		write(STDOUT_FILENO, line->buf + line-> pos, 1);
-	tputs(tgetstr("nw", 0), 1, my_putc);
-//	tputs(tgetstr("am", 0), 1, my_putc);
-	}
-	else
-		write(STDOUT_FILENO, line->buf + line-> pos, 1);
+		line->buf[line->pos] = key;
+		put_a_key(line, key);
 	}
 	else
 	{
+		new_pos = line->pos + 1;
+		new_len = line->buf_len + 1;
 		index = line->buf_len + 1;
 		while (--index > line->pos)
 			line->buf[index] = line->buf[index -1];
 		line->buf[line->pos] = key;
-		write(1, line->buf + line->pos, line->buf_len - line->pos + 1);
-		index = line->buf_len - line->pos + 2;
-		while (--index > 1)
+		index = line->pos;
+		line->buf_len = line->pos;
+		while (index < new_len)
 		{
-			if (index == line->buf_len - line->line_max + line->start_po)
-			tputs(tgetstr("bw", 0), 1, my_putc);
-			else
-			tputs(tgetstr("le", 0), 1, my_putc);
+			put_a_key(line, line->buf[index++]);
+			sleep(1);
 		}
+		index = (line->buf_len + line->start_po) / line->line_max - (new_pos +line->start_po) / line->line_max;
+		while ( index-- > 0)
+			tputs(tgetstr("up", 0), 1, my_putc);
+		sleep(1);
+		index = (line->buf_len + line->start_po) % line->line_max - (new_pos + line->start_po) % line->line_max;
+		positive = index >= 0 ? index : -index;
+		while (positive-- > 0)
+		{
+			tputs(tgetstr(index > 0 ? "le" : "nd" , 0), 1, my_putc);
+			sleep(1);
+		}
+		line->pos = new_pos;
 	}
-	line->pos++;
-	line->buf_len++;
+	return (0);
+}
+
+int				history_up(t_line *line)
+{
+		int		i;
+
+		i = 0;
+		t_history	*temp;
+
+		if (history)
+		{
+			temp = history;
+		while (temp->next)
+				temp = temp->next;
+		}
+		move_nleft(line);
+		if (temp)
+		{
+		while (temp
+		put_a_key(line, 
+		}
 
 	return (0);
 }
 
+
+	return (0);
+}
 
 unsigned long	get_key()
 {
@@ -314,9 +361,10 @@ void	init_line(t_line *line)
 	line->pos = 0;
 	line->buf_len = 0;
 	line->line_max = tgetnum("co");
-	line->start_po = 4;
+	line->start_po = 3;
 	line->ligne = 0;
 	line->col = 0;
+	line->last = NULL;
 	line->printable = printable;
 	line->move_left = move_left;
 	line->move_right = move_right;
@@ -331,7 +379,7 @@ void	init_line(t_line *line)
 
 }
 
-void	get_line(char *new_line)
+int		get_line(char *new_line)
 {
 	unsigned long	key;
 	t_line			line;
@@ -343,15 +391,54 @@ void	get_line(char *new_line)
 		line.engine(&line, key);
 	init_attr(SETOLD);
 	ft_strcpy(new_line, (const char *)line.buf);
+	return (0);
+}
+
+void	init_add(t_history *history, char *new_line)
+{
+	ft_bzero(history->his, 0);
+	ft_strcpy(history->his, new_line);
+	history->next = NULL;
+	history->pre = NULL;
+}
+
+void	add_history(t_history **history, t_history *add)
+{
+	t_history	*temp;
+
+	if (!*history)
+		*history = add;
+	else
+	{
+		temp = *history;
+		while (temp->next)
+			temp = temp->next;
+		temp->next = add;
+		add->pre = temp;
+	}
+}
+
+int		prompt(t_line *line)
+{
+	char				new_line[2048];
+	t_history			add;
+	int					quit;
+
+	quit = 0;
+	while (!quit)
+	{
+	ft_bzero(new_line, 2048);
+	get_line(new_line);
+	init_add(&add, new_line);
+	add_history(&history, &add);
+
+	if (!ft_strcmp(new_line, "exit"))
+		quit = 1;
+	ft_printf("new line =%s\n", new_line);
+	}
+	return (0);
 }
 
 int		main()
 {
-	char new_line[2048];
-
-	ft_bzero(new_line, 2048);
-	get_line(new_line);
-	ft_printf("new line =%s\n", new_line);
-
-	return (0);
 }

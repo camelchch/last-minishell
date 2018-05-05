@@ -77,6 +77,13 @@ void		update_lastapp(char *lastcmd, char ***env);
 #define CONTRL_H 8
 
 
+typedef struct s_history
+{
+	char his[2048];
+	struct s_history *next;
+	struct s_history *pre;;
+}				t_history;
+
 typedef struct s_line
 {
 	size_t		key;
@@ -87,6 +94,7 @@ typedef struct s_line
 	int			start_po;
 	int			ligne;
 	int			col;
+	t_history	*last;
 
 	int			(*printable)(struct s_line *line, unsigned long  a_key);
 	int			(*move_left)(struct s_line *line);
@@ -105,7 +113,6 @@ typedef struct s_key
 	int			(*func)(t_line *);
 }				t_key;
 
-//typedef strucy
 
 unsigned long	get_key();
 int			printable(t_line *line, size_t key);
