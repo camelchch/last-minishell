@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/05/03 16:43:44 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/05/09 17:10:17 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,12 @@ void		update_lastapp(char *lastcmd, char ***env);
 #define CT_SHIFT_LEFT 74999712013083
 #define CONTRL_L 12
 #define CONTRL_H 8
+#define CONTRL_A 1
+#define CONTRL_B 2
+#define CONTRL_E 5
+#define CONTRL_P 16
+#define CONTRL_HOME 79393463556891
+#define CONTRL_END 77194440301339
 
 
 typedef struct s_history
@@ -89,6 +95,7 @@ typedef struct s_line
 	size_t		key;
 	int			pos;
 	unsigned char	buf[MAX_BUF];
+	unsigned char	cp[MAX_BUF];
 	int			buf_len;
 	int			line_max;
 	int			start_po;
@@ -96,6 +103,8 @@ typedef struct s_line
 	int			col;
 	int			his_mostdown;
 	int			his_mostup;
+	int			up_indown;
+	int			one_his;
 	t_history	*last_his;
 
 	int			(*printable)(struct s_line *line, unsigned long  a_key);

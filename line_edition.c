@@ -329,6 +329,7 @@ int				history_up(t_line *line)
 	{
 		if (!line->his_mostdown && line->last_his->pre)
 			line->last_his = (line->last_his)->pre;
+		//if (!line->his_mostup)
 		if (!line->his_mostup)
 		{
 			while (line->last_his->his[++i])
@@ -336,16 +337,53 @@ int				history_up(t_line *line)
 				put_a_key(line, line->last_his->his[i]);
 				line->buf[i] = line->last_his->his[i];
 			}
-
 		}
+		if (line->his_mostup == 1)
+			line->up_indown = 1;
 		if (!line->last_his->next)
 			line->his_mostdown = 0;
 		if (!line->last_his->pre)
 			line->his_mostup = 1;
-	}
+	if (line->up_indown  && !line->last_his->next)
+		line->one_his = 1;
+		}
 	return (0);
 }
 
+
+int				history_down(t_line *line)
+{
+	int		i;
+
+	i = -1;
+
+	if (line->buf_len)
+		delete_all(line);
+	if (line->last_his && !line->last_his->next && !line->one_his)
+		line->his_mostup = 0;
+	if (line->last_his && (line->last_his->next || line->one_his))
+	{
+		if (!line->up_indown && (line->last_his)->next)
+			line->last_his = (line->last_his)->next;
+		while (line->last_his->his[++i])
+		{
+			put_a_key(line, line->last_his->his[i]);
+			line->buf[i] = line->last_his->his[i];
+		}
+		line->his_mostup = 0;
+		line->up_indown = 0;
+	if (!line->last_his->next)
+		line->his_mostdown = 0;
+	if (!line->last_his->pre)
+		line->his_mostup = 1;
+	line->one_his = 0;
+	}
+	else if (line->last_his && !line->last_his->next)
+		line->his_mostdown = 1;
+	return (0);
+}
+
+/*
 int				history_down(t_line *line)
 {
 	int		i;
@@ -356,7 +394,7 @@ int				history_down(t_line *line)
 		delete_all(line);
 	if (line->last_his && line->last_his->next)
 	{
-		if (!line->his_mostup && (line->last_his)->next)
+		if (!line->up_indown && (line->last_his)->next)
 			line->last_his = (line->last_his)->next;
 		while (line->last_his->his[++i])
 		{
@@ -364,13 +402,17 @@ int				history_down(t_line *line)
 			line->buf[i] = line->last_his->his[i];
 		}
 		line->his_mostup = 0;
+		line->up_indown = 0;
 	if (!line->last_his->next)
 		line->his_mostdown = 0;
+	if (!line->last_his->pre)
+		line->his_mostup = 1;
 	}
 	else if (line->last_his && !line->last_his->next)
 		line->his_mostdown = 1;
 	return (0);
 }
+*/
 
 unsigned long	get_key()
 {
@@ -380,6 +422,44 @@ unsigned long	get_key()
 	read(0, buff, 6);
 	return (buff[0] +( buff[1] << 8) + (buff[2] << 16) + (buff[3] << 24) +\
 			((unsigned long)buff[4] << 32) + ((unsigned long)buff[5] << 40));
+}
+
+int		cp_all(t_line *line)
+{
+	ft_bzero(line->cp, MAX_BUF);
+	ft_strcpy((char *)line->cp, (char *)line->buf);
+	return (0);
+}
+
+int		cp_begin(t_line *line)
+{
+	int		i;
+
+	i = line->pos + 1;
+	if (line->pos == line->buf_len)
+		i = line->pos;
+	ft_bzero(line->cp, MAX_BUF);
+	ft_strncpy((char *)line->cp, (char *)line->buf, i);
+	return (0);
+}
+
+int		cp_end(t_line *line)
+{
+	int		i;
+
+	i = line->buf_len - line->pos;
+	ft_bzero(line->cp, MAX_BUF);
+	ft_strncpy((char *)line->cp, (char *)line->buf + line->pos, i);
+	return (0);
+}
+
+int		paste(t_line *line)
+{
+	int		index;
+
+	index = line->pos;
+	while 
+	return (0);
 }
 
 void	init_line(t_line *line)
@@ -394,6 +474,8 @@ void	init_line(t_line *line)
 	line->col = 0;
 	line->his_mostdown = 1;
 	line->his_mostup = 0;
+	line->up_indown = 0;
+	line->one_his = 0;
 	//	line->last_his = NULL;
 	//if (history)
 	line->last_his = history;
