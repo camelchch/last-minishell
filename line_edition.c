@@ -90,6 +90,13 @@ int		engine(t_line *line, unsigned long  key)
 			{MY_HOME, line->move_nleft},
 			{CONTRL_L, line->mv_left_word},
 			{CONTRL_H, line->mv_right_word},
+			{CONTRL_A, line->cp_all},
+			{CONTRL_B, line->cp_begin},
+			{CONTRL_E, line->cp_end},
+			{CONTRL_AT, line->cut_all},
+			{CONTRL_HASH, line->cut_begin},
+			{CONTRL_PERCENT, line->cut_end},
+			{CONTRL_P, line->paste},
 			//{KEY_DELECT, line->delete}
 		};
 
@@ -246,7 +253,7 @@ void	delete_all(t_line *line)
 	while (line->buf_len)
 	{
 		delete_key(line);
-		sleep(1);
+		//sleep(1);
 	}
 }
 
@@ -291,18 +298,18 @@ int		printable(t_line *line, unsigned long key)
 		while (index < new_len)
 		{
 			put_a_key(line, line->buf[index++]);
-			sleep(1);
+			//sleep(1);
 		}
 		index = (line->buf_len + line->start_po) / line->line_max - (new_pos +line->start_po) / line->line_max;
 		while ( index-- > 0)
 			tputs(tgetstr("up", 0), 1, my_putc);
-		sleep(1);
+	//	sleep(1);
 		index = (line->buf_len + line->start_po) % line->line_max - (new_pos + line->start_po) % line->line_max;
 		positive = index >= 0 ? index : -index;
 		while (positive-- > 0)
 		{
 			tputs(tgetstr(index > 0 ? "le" : "nd" , 0), 1, my_putc);
-			sleep(1);
+	//		sleep(1);
 		}
 		line->pos = new_pos;
 	}
@@ -435,8 +442,8 @@ int		cp_begin(t_line *line)
 {
 	int		i;
 
-	i = line->pos + 1;
-	if (line->pos == line->buf_len)
+//	i = line->pos + 1;
+//	if (line->pos == line->buf_len)
 		i = line->pos;
 	ft_bzero(line->cp, MAX_BUF);
 	ft_strncpy((char *)line->cp, (char *)line->buf, i);
@@ -453,12 +460,78 @@ int		cp_end(t_line *line)
 	return (0);
 }
 
+int		cut_all(t_line *line)
+{
+	cp_all(line);
+	delete_all(line);
+	return (0);
+}
+
+int		cut_begin(t_line *line)
+{
+	cp_begin(line);
+	while (line->pos)
+		delete_key(line);
+	return (0);
+}
+
+int		cut_end(t_line *line)
+{
+	int		i;
+
+	i = line->buf_len - line->pos;
+	cp_end(line);
+	move_nright(line);
+	while (i--)
+		delete_key(line);
+	return (0);
+}
+
 int		paste(t_line *line)
 {
 	int		index;
+	int		i;
+	char	rest[MAX_BUF];
 
 	index = line->pos;
-	while 
+	ft_bzero(rest, MAX_BUF);
+	ft_strcpy(rest, (char *)line->buf + index);
+	i = 0;
+	while ( line->cp[i])
+		line->buf[index++] = line->cp[i++];
+	i = 0;
+	while ( rest[i])
+		line->buf[index++] = rest[i++];
+	i = line->buf_len - line->pos;
+	line->buf_len = line->pos;
+	index = line->pos;
+	while (line->buf[index])
+		put_a_key(line, line->buf[index++]);
+	while (i--)
+		move_left(line);
+	return (0);
+}
+
+int		go_up(t_line *line)
+{
+	int		i;
+
+	if (line->pos > line->line_max - line->start_po - 1)
+	{
+		tputs(tgetstr("up", 0), 1, my_putc);
+		if ((line->pos + line->start_po) / line->line_max == 1 && \
+			(line->pos + line->start_po) % line->line_max < line->start_po)
+		{
+			i = line->start_po - (line->pos + line->start_po) % line->line_max;
+			while (i)
+				move_right(line);
+		}
+	}
+	return (0);
+}
+
+int		go_down(t_line *line)
+{
 	return (0);
 }
 
@@ -491,7 +564,14 @@ void	init_line(t_line *line)
 	line->mv_right_word = mv_right_word;
 	line->history_up = history_up;
 	line->history_down = history_down;
-	//	line->move_nleft = move_nleft;
+	line->cp_all = cp_all;
+	line->cp_begin = cp_begin;
+	line->cp_end = cp_end;
+	line->cut_all = cut_all;
+	line->cut_begin = cut_begin;
+	line->cut_end = cut_end;
+	line->paste = paste;
+	line->go_up = go_up;
 	line->engine = engine;
 
 
@@ -512,8 +592,6 @@ void	add_history(t_history **history, t_history *add)
 		(*history)->next = add;
 		*history = add;
 		(*history)->pre = temp;
-		if((*history)->pre)
-			ft_printf("  his hv pre history  =%s ", (*history)->pre->his);
 		//	(*history)->pre = temp;
 	}
 }

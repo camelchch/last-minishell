@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/05/09 17:10:17 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/05/10 13:00:19 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void		update_lastapp(char *lastcmd, char ***env);
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
 #define MAX_BUF 2048
-#define NB_KEY 9
+#define NB_KEY 17
 #define	ARROW_LEFT 4479771
 #define ARROW_RIGHT 4414235
 #define	ARROW_UP 4283163
@@ -79,8 +79,11 @@ void		update_lastapp(char *lastcmd, char ***env);
 #define CONTRL_B 2
 #define CONTRL_E 5
 #define CONTRL_P 16
-#define CONTRL_HOME 79393463556891
-#define CONTRL_END 77194440301339
+#define CONTRL_HASH 27
+#define CONTRL_PERCENT 29
+#define CONTRL_AT 0
+#define MY_PAGE_UP 45067098907
+#define MY_PAGE_DOWN 45067164443
 
 
 typedef struct s_history
@@ -117,6 +120,14 @@ typedef struct s_line
 	int			(*mv_right_word)(struct s_line *line);
 	int			(*history_up)(struct s_line *line);
 	int			(*history_down)(struct s_line *line);
+	int			(*cp_all)(struct s_line *line);
+	int			(*cp_begin)(struct s_line *line);
+	int			(*cp_end)(struct s_line *line);
+	int			(*cut_all)(struct s_line *line);
+	int			(*cut_begin)(struct s_line *line);
+	int			(*cut_end)(struct s_line *line);
+	int			(*paste)(struct s_line *line);
+	int			(*go_up)(struct s_line *line);
 	int			(*engine)(struct s_line *line, unsigned long a_key);
 }				t_line;
 
