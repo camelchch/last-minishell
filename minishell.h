@@ -64,7 +64,7 @@ void		update_lastapp(char *lastcmd, char ***env);
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
 #define MAX_BUF 2048
-#define NB_KEY 17
+#define NB_KEY 18
 #define	ARROW_LEFT 4479771
 #define ARROW_RIGHT 4414235
 #define	ARROW_UP 4283163
@@ -84,6 +84,10 @@ void		update_lastapp(char *lastcmd, char ***env);
 #define CONTRL_AT 0
 #define MY_PAGE_UP 45067098907
 #define MY_PAGE_DOWN 45067164443
+#define OPTION_SHIFT_U 43202
+#define OPTION_SHIFT_D 36547
+#define CONTRL_N 14
+#define CONTRL_F 6
 
 
 typedef struct s_history
@@ -99,15 +103,17 @@ typedef struct s_line
 	int			pos;
 	unsigned char	buf[MAX_BUF];
 	unsigned char	cp[MAX_BUF];
+	unsigned char	ici_doc[MAX_BUF];
 	int			buf_len;
 	int			line_max;
 	int			start_po;
-	int			ligne;
-	int			col;
 	int			his_mostdown;
 	int			his_mostup;
 	int			up_indown;
 	int			one_his;
+	int			open_dquote;
+	int			open_squote;
+	int			here_doc;
 	t_history	*last_his;
 
 	int			(*printable)(struct s_line *line, unsigned long  a_key);
@@ -128,6 +134,7 @@ typedef struct s_line
 	int			(*cut_end)(struct s_line *line);
 	int			(*paste)(struct s_line *line);
 	int			(*go_up)(struct s_line *line);
+	int			(*go_down)(struct s_line *line);
 	int			(*engine)(struct s_line *line, unsigned long a_key);
 }				t_line;
 

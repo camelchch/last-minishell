@@ -20,7 +20,7 @@ size_t		get_key()
 	unsigned long e= (unsigned long)buff[4] <<  32;
 	unsigned long f= (unsigned long) buff[5] <<  40;
 //	printf("%lu %lu %lu %lu\n", a, b, c, a+b+c);
-	return (a + b + c + d);
+	return (a + b);
 }
 
 

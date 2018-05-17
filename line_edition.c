@@ -53,9 +53,11 @@ void	init_attr(int mod)
 	{
 		new = old;
 		new.c_lflag &= ~(ECHO | ICANON);
+		new.c_lflag |= ISIG;
 		new.c_oflag &= ~(OPOST);
 		new.c_cc[VMIN] = 1;
 		new.c_cc[VTIME] = 0;
+//		new.c_cc[VTNTR] = 1;
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &new);
 		tgetent(NULL, getenv("TERM"));
 	}
@@ -97,6 +99,8 @@ int		engine(t_line *line, unsigned long  key)
 			{CONTRL_HASH, line->cut_begin},
 			{CONTRL_PERCENT, line->cut_end},
 			{CONTRL_P, line->paste},
+			{CONTRL_F, line->go_up},
+			{CONTRL_N, line->go_down},
 			//{KEY_DELECT, line->delete}
 		};
 
@@ -280,6 +284,10 @@ int		printable(t_line *line, unsigned long key)
 	int		new_pos;
 	int		new_len;
 
+	if (key == 34 && line->open_squote < 0)
+		line->open_dquote = (line->open_dquote) * (-1);
+	if (key == 39 && line->open_dquote < 0)
+		line->open_squote = (line->open_squote) * (-1);
 	if (line->pos == line->buf_len)
 	{
 		line->buf[line->pos] = key;
@@ -519,36 +527,58 @@ int		go_up(t_line *line)
 	if (line->pos > line->line_max - line->start_po - 1)
 	{
 		tputs(tgetstr("up", 0), 1, my_putc);
-		if ((line->pos + line->start_po) / line->line_max == 1 && \
+		line->pos = line->pos - line->line_max;
+		sleep(1);
+		if ((line->pos + line->start_po) / line->line_max == 0 && \
 			(line->pos + line->start_po) % line->line_max < line->start_po)
 		{
 			i = line->start_po - (line->pos + line->start_po) % line->line_max;
-			while (i)
+			while (i--)
+			{
 				move_right(line);
+				sleep (1);
+				}
 		}
 	}
 	return (0);
+
 }
 
 int		go_down(t_line *line)
 {
+	int		i;
+
+	if ((line->buf_len - 1 + line->start_po) / line->line_max >
+			(line->pos + line->start_po) / line->line_max)
+	{
+		tputs(tgetstr("do", 0), 1, my_putc);
+		line->pos = line->pos + line->line_max;
+		if (line->pos > line->buf_len - 1)
+		{
+			i = line->pos - (line->buf_len - 1);
+			while (i--)
+				move_left(line);
+		}
+	}
 	return (0);
 }
 
 void	init_line(t_line *line)
 {
 	ft_bzero(line->buf, MAX_BUF);
+	ft_bzero(line->ici_doc, MAX_BUF);
 	line->key = 0;
 	line->pos = 0;
 	line->buf_len = 0;
 	line->line_max = tgetnum("co");
 	line->start_po = 3;
-	line->ligne = 0;
-	line->col = 0;
 	line->his_mostdown = 1;
 	line->his_mostup = 0;
 	line->up_indown = 0;
 	line->one_his = 0;
+	line->open_dquote = -1;
+	line->open_squote = -1;
+	line->here_doc = 0;
 	//	line->last_his = NULL;
 	//if (history)
 	line->last_his = history;
@@ -572,6 +602,7 @@ void	init_line(t_line *line)
 	line->cut_end = cut_end;
 	line->paste = paste;
 	line->go_up = go_up;
+	line->go_down = go_down;
 	line->engine = engine;
 
 
@@ -612,13 +643,29 @@ int		not_empty(char *new_line)
 int		get_line(char *new_line, t_line *line)
 {
 	unsigned long	key;
+	char			*prompt;
 
-	ft_printf("$> ");
+	prompt = "$> ";
+	ft_printf("%s", prompt);
 	init_attr(SETNEW);
 	init_line(line);
-	while ((key = (int)get_key()) != EOF && key != '\n')
+	while (((key = (int)get_key()) && key != '\n') || line->open_dquote > 0 || line->open_squote > 0)
+	{
+		if (key == '\n')
+			break;
 		line->engine(line, key);
+		}
 	init_attr(SETOLD);
+	if (line->open_dquote > 0)
+	{
+		ft_printf("\nUnmatched \" .\n");
+		ft_bzero(line->buf, MAX_BUF);
+	}
+	if (line->open_squote > 0)
+	{
+		ft_printf("\nUnmatched \' .\n");
+		ft_bzero(line->buf, MAX_BUF);
+	}
 	ft_strcpy(new_line, (const char *)line->buf);
 	return (0);
 }
