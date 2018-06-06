@@ -1,0 +1,35 @@
+total 440$
+ 0 drwxr-xr-x  34 saxiao  2017_paris   1156 Jun  6 15:42 .$
+ 0 drwxr-xr-x  88 saxiao  2017_paris   3060 Jun  6 15:42 ..$
+ 0 drwxr-xr-x  14 saxiao  2017_paris    476 Jun  6 15:42 .git$
+ 8 -rw-r--r--   1 saxiao  2017_paris   1992 May 29 16:19 Makefile$
+96 -rwxr-xr-x   1 saxiao  2017_paris  47116 Jun  6 15:34 a.out$
+ 8 -rw-r--r--   1 saxiao  2017_paris      7 May 29 16:19 author$
+ 8 -rw-r--r--   1 saxiao  2017_paris   4010 May 29 16:19 build_in.c$
+16 -rw-r--r--   1 saxiao  2017_paris   6096 May 29 16:19 build_in.o$
+ 0 -rw-r--r--   1 saxiao  2017_paris      0 Jun  6 15:42 fichier$
+ 0 drwxr-xr-x  71 saxiao  2017_paris   2414 May 29 16:19 libft$
+32 -rw-r--r--   1 saxiao  2017_paris  14655 Jun  6 15:34 line_edition.c$
+16 -rw-r--r--   1 saxiao  2017_paris   6128 May 29 16:19 line_edition.o$
+ 8 -rw-r--r--   1 saxiao  2017_paris    307 May 29 16:19 log$
+ 8 -rw-r--r--   1 saxiao  2017_paris   3201 May 29 16:19 main.c$
+ 8 -rw-r--r--   1 saxiao  2017_paris   3040 May 29 16:19 main.o$
+96 -rwxr-xr-x   1 saxiao  2017_paris  47596 May 29 16:19 minishell$
+ 0 drwxr-xr-x   3 saxiao  2017_paris    102 May 29 16:19 minishell.dSYM$
+16 -rw-r--r--   1 saxiao  2017_paris   4363 Jun  6 15:16 minishell.h$
+ 8 -rw-r--r--   1 saxiao  2017_paris    748 May 31 17:21 parsing.c$
+ 8 -rw-r--r--   1 saxiao  2017_paris   1140 May 31 16:14 parsing.h$
+ 8 -rw-r--r--   1 saxiao  2017_paris   2962 May 29 16:19 pipes.c$
+ 8 -rw-r--r--   1 saxiao  2017_paris   2180 May 29 16:19 pipes.o$
+ 8 -rw-r--r--   1 saxiao  2017_paris   2242 May 29 16:19 sh_table.c$
+ 8 -rw-r--r--   1 saxiao  2017_paris   2564 May 29 16:19 sh_table.o$
+ 8 -rw-r--r--   1 saxiao  2017_paris   3333 May 29 16:19 shell.c$
+ 8 -rw-r--r--   1 saxiao  2017_paris    757 May 29 16:19 shell.h$
+ 8 -rw-r--r--   1 saxiao  2017_paris   4052 May 29 16:19 shell.o$
+ 0 -rw-r--r--   1 saxiao  2017_paris      0 May 30 11:22 stderr.txt$
+ 8 -rw-r--r--   1 saxiao  2017_paris    173 May 29 16:19 stdout.txt$
+ 8 -rw-r--r--   1 saxiao  2017_paris    219 May 29 16:19 test$
+ 8 -rw-r--r--   1 saxiao  2017_paris    855 May 29 16:19 test.c$
+ 8 -rw-r--r--   1 saxiao  2017_paris     72 May 29 16:19 test.sh$
+ 8 -rw-r--r--   1 saxiao  2017_paris    813 May 29 16:39 test1.c$
+ 8 -rw-r--r--   1 saxiao  2017_paris    910 May 29 16:19 try.c$

@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/05/10 13:00:19 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/06 16:03:00 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ typedef struct s_line
 	int			one_his;
 	int			open_dquote;
 	int			open_squote;
-	int			here_doc;
+	int			heredoc_end;
 	t_history	*last_his;
 
 	int			(*printable)(struct s_line *line, unsigned long  a_key);

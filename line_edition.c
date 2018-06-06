@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
+#include <fcntl.h>
 //#include "shell.h"
 #include "minishell.h"
 
@@ -563,7 +564,7 @@ int		go_down(t_line *line)
 	return (0);
 }
 
-void	init_line(t_line *line)
+void	init_line(char	*prompt, t_line *line)
 {
 	ft_bzero(line->buf, MAX_BUF);
 	ft_bzero(line->ici_doc, MAX_BUF);
@@ -571,14 +572,14 @@ void	init_line(t_line *line)
 	line->pos = 0;
 	line->buf_len = 0;
 	line->line_max = tgetnum("co");
-	line->start_po = 3;
+	line->start_po = ft_strlen(prompt);
 	line->his_mostdown = 1;
 	line->his_mostup = 0;
 	line->up_indown = 0;
 	line->one_his = 0;
 	line->open_dquote = -1;
 	line->open_squote = -1;
-	line->here_doc = 0;
+	line->heredoc_end = 0;
 	//	line->last_his = NULL;
 	//if (history)
 	line->last_his = history;
@@ -640,15 +641,28 @@ int		not_empty(char *new_line)
 	return (0);
 }
 
-int		get_line(char *new_line, t_line *line)
+//test if there is "<<", no return -1, yes return where heredoc starts
+int		inclu_heredoc(char *line)
+{
+	int		i;
+
+	i = -1;
+	while (++i < ft_strlen(line) - 2)
+	{
+		if (line[i] == '<' && line[i + 1] == '<' && line[i + 2] != '<')
+			return (i + 2);
+	}
+	return (-1);
+}
+
+
+int		get_line(char *prompt, char *new_line, t_line *line)
 {
 	unsigned long	key;
-	char			*prompt;
 
-	prompt = "$> ";
 	ft_printf("%s", prompt);
 	init_attr(SETNEW);
-	init_line(line);
+	init_line(prompt,line);
 	while (((key = (int)get_key()) && key != '\n') || line->open_dquote > 0 || line->open_squote > 0)
 	{
 		if (key == '\n')
@@ -670,6 +684,38 @@ int		get_line(char *new_line, t_line *line)
 	return (0);
 }
 
+void	my_here_doc(char *line)
+{
+	int		i;
+	int		j;
+	char	here_mark[MAX_BUF];
+	char	here_doc_buf[MAX_BUF];
+	int		here_end;
+	char	temp_path[MAX_BUF];
+	int		temp_fd;
+	t_line	doc_line;
+
+	i = inclu_heredoc(line);
+	j = 0;
+	here_end = 0;
+	ft_bzero(here_mark, MAX_BUF);
+	temp_fd = open("./42sh_tmp", O_CREAT | O_RDONLY | O_APPEND);
+	if (temp_fd < 0)
+		ft_printf("temp file failed to be opened\n");
+	while (i < ft_strlen(line) && line[i] == ' ')
+		i++;
+	while (i < ft_strlen(line) && line[i] != ' ')
+			here_mark[j++] = line[i++];
+	while (!here_end)
+	{
+		ft_bzero(here_doc_buf, MAX_BUF);
+		get_line("\nheredoc> ",here_doc_buf, &doc_line);
+		write(temp_fd, here_doc_buf, ft_strlen(here_doc_buf));
+		if (!ft_strcmp(here_mark, here_doc_buf))
+			here_end = 1;
+	}
+}
+
 int		prompt()
 {
 	char				new_line[2048];
@@ -682,11 +728,15 @@ int		prompt()
 	{
 		add = malloc(sizeof(t_history));
 		ft_bzero(new_line, 2048);
-		get_line(new_line, &line);
+		get_line("$> ",new_line, &line);
 		if (not_empty(new_line))
 		{
 			init_add(add, new_line);
 			add_history(&history, add);
+		}
+		if (inclu_heredoc(new_line) >= 0)
+		{
+			my_here_doc(new_line);
 		}
 		if (!ft_strcmp(new_line, "exit"))
 			quit = 1;
