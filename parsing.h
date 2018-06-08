@@ -17,25 +17,29 @@ typedef enum s_token {
 //	ARG,
 	FILEREDI,
 	OPERAND,
-	FILES,
+	//FILES,
 }			t_token;
 
 typedef enum s_type {
 	PROGRAM = 10,
-	LESS,//<
-	DLESS, //<<
-	AND, //&&
-	GREAT, //>
-	DGREAT, //>>
-	OR,//||
-	PIPE, //|
-	SEMI_DOT, //;
+	ARG, //11
+	LESS,//< 12
+	DLESS, //<< 13
+	AND, //&& 14
+	GREAT, //> 15
+	DGREAT, //>> 16
+	OR,//|| 17
+	PIPE, //| 18
+	SEMI_DOT, // 19;
+	FILES, //20
+	FD, //21
 }			t_type;
 
 typedef struct	s_word{
 	char			word[MAX_BUF];
 	t_type			type;
 	struct s_word	*next;
+	struct s_word	*pre;
 }				t_word;
 /*
 t_list *l;
@@ -58,16 +62,16 @@ typedef struct	s_file{
 
 typedef struct		s_list_token{
 	t_token			*tok; 
-	t_operand		*next; //(default null)
-	t_operand		*prev; //(default null)
+//	t_operand		*next; //(default null)
+//	t_operand		*prev; //(default null)
 	char			*name;
 	t_file			out;
 	t_file			in;
 	char			**args;
 //	char			*opt;
 	char			**env;
-	s_list_token	*after;
-	s_list_token	*before;
+	struct s_list_token	*after;
+	struct s_list_token	*before;
 }					t_list_token;
 
 
