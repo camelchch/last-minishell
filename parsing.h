@@ -24,9 +24,13 @@ typedef enum s_type {
 	PROGRAM = 10,
 	ARG, //11
 	LESS,//< 12
+	LESSAND,// <&
+	LESSANDMINUS,// <&-
 	DLESS, //<< 13
 	AND, //&& 14
 	GREAT, //> 15
+	GREATAND, // >& 15
+	GREATANDMINUS, // >&- 15
 	DGREAT, //>> 16
 	OR,//|| 17
 	PIPE, //| 18
