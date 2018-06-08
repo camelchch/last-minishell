@@ -1,5 +1,6 @@
 #ifndef PARSING_H
 #define PARSING_H
+#include "minishell.h"
 /*
 ls -la /bin > file1 2>&- && cat -e file1 | less
 
@@ -19,19 +20,21 @@ typedef enum s_token {
 	FILES,
 }			t_token;
 
-typedef enum s_operand {
-	LESS = 10,//<
+typedef enum s_type {
+	PROGRAM = 10,
+	LESS,//<
 	DLESS, //<<
 	AND, //&&
 	GREAT, //>
 	DGREAT, //>>
 	OR,//||
 	PIPE, //|
-}			t_operand;
+	SEMI_DOT, //;
+}			t_type;
 
 typedef struct	s_word{
-	char			**content;
-	int				type;
+	char			word[MAX_BUF];
+	t_type			type;
 	struct s_word	*next;
 }				t_word;
 /*

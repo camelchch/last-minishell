@@ -227,6 +227,10 @@ int		delete_key(t_line *line)
 
 	if (line->pos > 0)
 	{
+	if (line->buf[line->pos - 1] == '"' && line->open_squote < 0)
+		line->open_dquote = (line->open_dquote) * (-1);
+	if (line->buf[line->pos - 1] == '\'' && line->open_dquote < 0)
+		line->open_squote = (line->open_squote) * (-1);
 		i = line->pos - 2;
 		while (++i < line->buf_len)
 			line->buf[i] = line->buf[i + 1];
@@ -285,7 +289,7 @@ int		printable(t_line *line, unsigned long key)
 	int		new_pos;
 	int		new_len;
 
-	if (key == 34 && line->open_squote < 0)
+	if (key == 34 && !(line->pos - 1 >= 0 && line->buf[line->pos - 1] == '\\') && line->open_squote < 0)
 		line->open_dquote = (line->open_dquote) * (-1);
 	if (key == 39 && line->open_dquote < 0)
 		line->open_squote = (line->open_squote) * (-1);
@@ -568,7 +572,6 @@ void	init_line(char	*prompt, t_line *line)
 {
 	ft_bzero(line->buf, MAX_BUF);
 	ft_bzero(line->ici_doc, MAX_BUF);
-	line->key = 0;
 	line->pos = 0;
 	line->buf_len = 0;
 	line->line_max = tgetnum("co");
@@ -579,7 +582,7 @@ void	init_line(char	*prompt, t_line *line)
 	line->one_his = 0;
 	line->open_dquote = -1;
 	line->open_squote = -1;
-	line->heredoc_end = 0;
+//	line->here_end = 0;
 	//	line->last_his = NULL;
 	//if (history)
 	line->last_his = history;
@@ -684,36 +687,54 @@ int		get_line(char *prompt, char *new_line, t_line *line)
 	return (0);
 }
 
+void	line_after_heredoc(char *line, int	after_mark, char *change)
+{
+	char	after[MAX_BUF];
+	int		i;
+
+	i = inclu_heredoc(line) - 2;
+	ft_bzero(after, MAX_BUF);
+	ft_strcpy(after, line + after_mark);
+	ft_bzero(line + i, MAX_BUF - i);
+	ft_strcat(line, " < ");
+	ft_strcat(line, change);
+	ft_strcat(line, after);
+}
+
 void	my_here_doc(char *line)
 {
 	int		i;
 	int		j;
-	char	here_mark[MAX_BUF];
-	char	here_doc_buf[MAX_BUF];
-	int		here_end;
-	char	temp_path[MAX_BUF];
 	int		temp_fd;
 	t_line	doc_line;
 
 	i = inclu_heredoc(line);
 	j = 0;
-	here_end = 0;
-	ft_bzero(here_mark, MAX_BUF);
-	temp_fd = open("./42sh_tmp", O_CREAT | O_RDONLY | O_APPEND);
+	doc_line.here_end = 0;
+	ft_bzero(doc_line.here_mark, MAX_BUF);
+	temp_fd = open("./42sh_tmp.c", O_CREAT | O_TRUNC | O_RDWR | O_APPEND, S_IWUSR | S_IRUSR);
 	if (temp_fd < 0)
 		ft_printf("temp file failed to be opened\n");
 	while (i < ft_strlen(line) && line[i] == ' ')
 		i++;
 	while (i < ft_strlen(line) && line[i] != ' ')
-			here_mark[j++] = line[i++];
-	while (!here_end)
+			doc_line.here_mark[j++] = line[i++];
+	while (!doc_line.here_end)
 	{
-		ft_bzero(here_doc_buf, MAX_BUF);
-		get_line("\nheredoc> ",here_doc_buf, &doc_line);
-		write(temp_fd, here_doc_buf, ft_strlen(here_doc_buf));
-		if (!ft_strcmp(here_mark, here_doc_buf))
-			here_end = 1;
+		ft_bzero(doc_line.here_doc_buf, MAX_BUF);
+		get_line("\nheredoc> ",(char *)doc_line.here_doc_buf, &doc_line);
+		if (ft_strcmp((char *)doc_line.here_mark, (char *)doc_line.here_doc_buf))
+		{
+		if (write(temp_fd, doc_line.here_doc_buf, ft_strlen((char *)doc_line.here_doc_buf)) < 0)
+			ft_printf("write into temp file failed\n");
+			write(temp_fd, "\n",1);
+		}
+		else
+			doc_line.here_end = 1;
 	}
+	if (close(temp_fd) == -1)
+		ft_printf("close temp file failed\n");
+	line_after_heredoc(line, i, "./42sh_tmp.c");
 }
 
 int		prompt()
@@ -733,9 +754,7 @@ int		prompt()
 		{
 			init_add(add, new_line);
 			add_history(&history, add);
-		}
 		if (inclu_heredoc(new_line) >= 0)
-		{
 			my_here_doc(new_line);
 		}
 		if (!ft_strcmp(new_line, "exit"))

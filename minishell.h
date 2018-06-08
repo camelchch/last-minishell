@@ -99,10 +99,11 @@ typedef struct s_history
 
 typedef struct s_line
 {
-	size_t		key;
 	int			pos;
 	unsigned char	buf[MAX_BUF];
 	unsigned char	cp[MAX_BUF];
+	unsigned char	here_mark[MAX_BUF];
+	unsigned char	here_doc_buf[MAX_BUF];
 	unsigned char	ici_doc[MAX_BUF];
 	int			buf_len;
 	int			line_max;
@@ -113,7 +114,7 @@ typedef struct s_line
 	int			one_his;
 	int			open_dquote;
 	int			open_squote;
-	int			heredoc_end;
+	int			here_end;
 	t_history	*last_his;
 
 	int			(*printable)(struct s_line *line, unsigned long  a_key);
