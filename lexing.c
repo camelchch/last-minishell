@@ -1,11 +1,11 @@
 #include <stdlib.h>
-#include "parsing.h"
-
+#include "minishell.h"
+// <<& >>& with & i didn't do err handing
 int			is_seprator(char *line, int index)
 {
 	if (index < ft_strlen(line))
 	{
-		if (line[index] == ' ' || line[index] == '<')
+		if (line[index] == ' '  || line[index ] == '\t' || line[index] == '<')
 			return (1);
 		if (line[index] == '&' && index + 1 < ft_strlen(line) && line[index + 1] == '&')
 			return (1);
@@ -214,6 +214,12 @@ int			is_redirector(t_type type)
 	return (0);
 }
 
+int			is_logic(t_type type)
+{
+	return (type == AND || type == OR);
+	return (0);
+}
+
 int		only_nb_str(char *str)
 {
 	while (*str)
@@ -227,11 +233,36 @@ int		only_nb_str(char *str)
 
 int			program_exit_before(t_word *li)
 {
-	while (li && li->type != PROGRAM && li->type != AND && li->type != OR && li->type != PIPE)
+	while (li && li->type != PROGRAM && li->type != AND && li->type != OR && li->type != PIPE && li->type != SEMI_DOT)
 		li = li->pre;
 	if (li && li->type == PROGRAM)
 		return (1);
 	return (0);
+}
+
+int			program_exit_after(t_word *li)
+{
+	while (li && li->type != PROGRAM && li->type != AND && li->type != OR && li->type != PIPE && li->type != SEMI_DOT)
+		li = li->next;
+	if (li && li->type == PROGRAM)
+		return (1);
+	return (0);
+}
+
+int			heredoc_exit_before(t_word *li)
+{
+	while (li && li->type != DLESS && li->type != AND && li->type != OR && li->type != PIPE && li->type != SEMI_DOT)
+		li = li->pre;
+	if (li && li->type == DLESS)
+		return (1);
+	return (0);
+}
+
+void		modif_redi_type(t_word *last, t_word *add)
+{
+	add->type = FILES;
+	if (last->type == DLESS)
+		add->type = HERE_DOC_MARK;
 }
 
 void		modif_type(t_word *last, t_word *add)
@@ -242,7 +273,7 @@ void		modif_type(t_word *last, t_word *add)
 	if (add->type == PROGRAM)
 	{
 		if (is_redirector(cp->type))
-			add->type = FILES;
+			modif_redi_type(cp, add);
 		else if (cp->type == LESSAND || cp->type == GREATAND)
 		{
 			if (only_nb_str(add->word))
@@ -252,7 +283,7 @@ void		modif_type(t_word *last, t_word *add)
 		}
 		else
 		{
-		if (program_exit_before(cp))
+			if (program_exit_before(cp))
 				add->type = ARG;
 		}
 	}
@@ -312,9 +343,10 @@ void	print_words(t_word *list)
 			ft_printf("FILES ");
 		else if (cp->type == FD)
 			ft_printf("FD ");
+		else if (cp->type == HERE_DOC_MARK)
+			ft_printf("HERE_DOC_MARK ");
 		cp = cp->next;
 	}
-
 }
 
 t_word		*command_to_words(char *line)
@@ -334,9 +366,8 @@ t_word		*command_to_words(char *line)
 			add = init_add_word(line, &i, &j);
 			if (add)
 			{
-				ft_printf("%s ", add->word);
+				//ft_printf("%s ", add->word);
 				res = add_word(res, add);
-				print_words(add);
 			}
 		}
 	}
@@ -358,20 +389,38 @@ int		err_in_words(t_word *list)
 	cp = list;
 	while (cp)
 	{
+		if (cp->type == LESS || cp->type == GREAT || cp->type == GREATAND || cp->type == DGREAT)
+		{
+			if (!cp->next || (cp->next->type != FILES && cp->next->type != FD))
+				return (return_message("\nMissing name for redirect.\n",1));
+		}
+		if (cp->type == DLESS)
+		{
+			if (!cp->next || cp->next->type != HERE_DOC_MARK)
+				return (return_message("\nMissing name for redirect.\n",1));
+			if (heredoc_exit_before(cp->pre))
+				return (return_message("\nAmbiguous input redirect.\n",1));
+		}
 		if (is_redirector(cp->type) && !program_exit_before(cp->pre))
-			return (return_message("Invalide null cmmand.\n", 1));
+			return (return_message("\nInvalide null cmmand.\n", 1));
 		if (cp->type == LESSAND && (!cp->next || cp->next->type != FD))
-			return (return_message("Missing file descriptor.\n",1));
+			return (return_message("\nMissing file descriptor.\n",1));
+		if ((is_logic(cp->type) || cp->type == PIPE) && (!program_exit_before(cp->pre) || !program_exit_after(cp->next)))
+			return (return_message("\nInvalide null cmmand.\n", 1));
 		cp = cp->next;
 	}
 	return (0);
 }
 
+/*
 int		main()
 {
 	t_word		*res;
-	char *line = "ls -4 2 >&--";
+	char *line = ";;";
 	res = command_to_words(line);
-	ft_printf("00000\n");
+	ft_printf("\n");
 	print_words(res);
+	if (err_in_words(res))
+		ft_printf("there is err\n");
 }
+*/

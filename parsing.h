@@ -1,6 +1,5 @@
 #ifndef PARSING_H
 #define PARSING_H
-#include "minishell.h"
 /*
 ls -la /bin > file1 2>&- && cat -e file1 | less
 
@@ -37,6 +36,7 @@ typedef enum s_type {
 	SEMI_DOT, // 19;
 	FILES, //20
 	FD, //21
+	HERE_DOC_MARK,
 }			t_type;
 
 typedef struct	s_word{

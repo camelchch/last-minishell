@@ -743,6 +743,7 @@ int		prompt()
 	t_history			*add;
 	int					quit;
 	t_line				line;
+	t_word				*list;
 
 	quit = 0;
 	while (!quit)
@@ -754,12 +755,19 @@ int		prompt()
 		{
 			init_add(add, new_line);
 			add_history(&history, add);
+			list = command_to_words(new_line);
+			//ft_printf("\n");
+			//print_words(list);
+			if (!err_in_words(list))
+			{
 		if (inclu_heredoc(new_line) >= 0)
 			my_here_doc(new_line);
+			}
 		}
+		ft_printf("\n");
 		if (!ft_strcmp(new_line, "exit"))
 			quit = 1;
-		ft_printf("new line =%s\n", new_line);
+	//	ft_printf("new line =%s\n", new_line);
 	}
 	return (0);
 }
