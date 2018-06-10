@@ -15,6 +15,8 @@
 #include "libft/libft.h"
 
 #ifndef MINISHELL_H
+int		open_dquote;
+int		open_squote;
 
 typedef struct s_table
 {
@@ -44,7 +46,7 @@ int			is_buildin(char *app);
 char		**unset_env(char **paras, char **env);
 void		do_build(char **paras, char ***env, t_sh *table);
 void		put_env(char **env, char **paras, t_sh *table);
-char		*ft_getenv(char **env, char *name);
+char		*ft_getenv(char **env, char *name);//sh_table.c
 void		init_shtable(t_sh *table, char **path);
 void		shell(int ac, char **av, char **env, t_sh *table);
 void		child_pro(char **paras, char **env, t_sh *table);
@@ -111,8 +113,6 @@ typedef struct s_line
 	int			his_mostup;
 	int			up_indown;
 	int			one_his;
-	int			open_dquote;
-	int			open_squote;
 	int			here_end;
 	t_history	*last_his;
 
@@ -228,7 +228,12 @@ typedef struct		s_list_token{
 	struct s_list_token	*before;
 }					t_list_token;
 
-
+typedef struct		s_helper{
+		int		i;
+		int		j;
+		int		k;
+		int		index;
+}					t_helper;
 //ls | less
 
 
@@ -238,4 +243,7 @@ typedef struct		s_list_token{
 t_word			*command_to_words(char *line);
 void			print_words(t_word *list);
 int				err_in_words(t_word *list);
+void			remove_quoting_list(t_word *list, char **env);// parsing.c 
+int				dslash_before(char *line, int index); //line_edition.c
+int				return_message(char *message, int re_value); //lexing.c
 #endif

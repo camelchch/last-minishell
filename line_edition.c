@@ -227,10 +227,6 @@ int		delete_key(t_line *line)
 
 	if (line->pos > 0)
 	{
-	if (line->buf[line->pos - 1] == '"' && line->open_squote < 0)
-		line->open_dquote = (line->open_dquote) * (-1);
-	if (line->buf[line->pos - 1] == '\'' && line->open_dquote < 0)
-		line->open_squote = (line->open_squote) * (-1);
 		i = line->pos - 2;
 		while (++i < line->buf_len)
 			line->buf[i] = line->buf[i + 1];
@@ -289,10 +285,6 @@ int		printable(t_line *line, unsigned long key)
 	int		new_pos;
 	int		new_len;
 
-	if (key == 34 && !(line->pos - 1 >= 0 && line->buf[line->pos - 1] == '\\') && line->open_squote < 0)
-		line->open_dquote = (line->open_dquote) * (-1);
-	if (key == 39 && line->open_dquote < 0)
-		line->open_squote = (line->open_squote) * (-1);
 	if (line->pos == line->buf_len)
 	{
 		line->buf[line->pos] = key;
@@ -403,37 +395,6 @@ int				history_down(t_line *line)
 	return (0);
 }
 
-/*
-int				history_down(t_line *line)
-{
-	int		i;
-
-	i = -1;
-
-	if (line->buf_len)
-		delete_all(line);
-	if (line->last_his && line->last_his->next)
-	{
-		if (!line->up_indown && (line->last_his)->next)
-			line->last_his = (line->last_his)->next;
-		while (line->last_his->his[++i])
-		{
-			put_a_key(line, line->last_his->his[i]);
-			line->buf[i] = line->last_his->his[i];
-		}
-		line->his_mostup = 0;
-		line->up_indown = 0;
-	if (!line->last_his->next)
-		line->his_mostdown = 0;
-	if (!line->last_his->pre)
-		line->his_mostup = 1;
-	}
-	else if (line->last_his && !line->last_his->next)
-		line->his_mostdown = 1;
-	return (0);
-}
-*/
-
 unsigned long	get_key()
 {
 	unsigned char	buff[6];
@@ -455,9 +416,7 @@ int		cp_begin(t_line *line)
 {
 	int		i;
 
-//	i = line->pos + 1;
-//	if (line->pos == line->buf_len)
-		i = line->pos;
+	i = line->pos;
 	ft_bzero(line->cp, MAX_BUF);
 	ft_strncpy((char *)line->cp, (char *)line->buf, i);
 	return (0);
@@ -580,14 +539,8 @@ void	init_line(char	*prompt, t_line *line)
 	line->his_mostup = 0;
 	line->up_indown = 0;
 	line->one_his = 0;
-	line->open_dquote = -1;
-	line->open_squote = -1;
-//	line->here_end = 0;
-	//	line->last_his = NULL;
-	//if (history)
 	line->last_his = history;
-	//	else
-	//		init_add(&(line->last_his), "");
+
 	line->printable = printable;
 	line->move_left = move_left;
 	line->move_right = move_right;
@@ -608,8 +561,6 @@ void	init_line(char	*prompt, t_line *line)
 	line->go_up = go_up;
 	line->go_down = go_down;
 	line->engine = engine;
-
-
 }
 
 
@@ -621,13 +572,10 @@ void	add_history(t_history **history, t_history *add)
 		*history = add;
 	else
 	{
-		//	while (temp->next)
 		temp = *history;
-		//		add->pre = *history;
 		(*history)->next = add;
 		*history = add;
 		(*history)->pre = temp;
-		//	(*history)->pre = temp;
 	}
 }
 
@@ -658,6 +606,47 @@ int		inclu_heredoc(char *line)
 	return (-1);
 }
 
+int		dslash_before(char *line, int index)
+{
+	int		i;
+	int		j;
+
+	i = 0;
+	j = index - 1;
+	while (j >= 0 && line[j] == '\\')
+	{
+		i++;
+		j--;
+	}
+	if (!(i % 2))
+		return(1);
+	return (0);
+}
+
+int		open_quote_exit(char *line)
+{
+	int		open_dquote;
+	int		open_squote;
+	int		i;
+
+	open_dquote = -1;
+	open_squote = -1;
+	i = -1;
+	while (line[++i])
+	{
+		if (line[i] == '"' && open_squote < 0 && dslash_before(line, i))
+			open_dquote = -open_dquote;
+		else if (line[i] == '\'' && open_dquote < 0)
+			open_squote = -open_squote;
+		else if (line[i] == '\\' && open_dquote < 0 && open_squote < 0 && dslash_before(line, i) && !line[i + 1])
+		return(return_message("\nUnmatched \\ .", 1));
+	}
+	if (open_dquote > 0)
+		return(return_message("\nUnmatched \" .", 1));
+	if (open_squote > 0)
+		return(return_message("\nUnmatched \' .", 1));
+	return (0);
+}
 
 int		get_line(char *prompt, char *new_line, t_line *line)
 {
@@ -666,23 +655,15 @@ int		get_line(char *prompt, char *new_line, t_line *line)
 	ft_printf("%s", prompt);
 	init_attr(SETNEW);
 	init_line(prompt,line);
-	while (((key = (int)get_key()) && key != '\n') || line->open_dquote > 0 || line->open_squote > 0)
+	while (((key = (int)get_key()) && key != '\n'))
 	{
 		if (key == '\n')
 			break;
 		line->engine(line, key);
 		}
 	init_attr(SETOLD);
-	if (line->open_dquote > 0)
-	{
-		ft_printf("\nUnmatched \" .\n");
+	if (open_quote_exit((char *)line->buf))
 		ft_bzero(line->buf, MAX_BUF);
-	}
-	if (line->open_squote > 0)
-	{
-		ft_printf("\nUnmatched \' .\n");
-		ft_bzero(line->buf, MAX_BUF);
-	}
 	ft_strcpy(new_line, (const char *)line->buf);
 	return (0);
 }
@@ -737,9 +718,18 @@ void	my_here_doc(char *line)
 	line_after_heredoc(line, i, "./42sh_tmp.c");
 }
 
-int		prompt()
+void	print_ww(t_word *list)
 {
-	char				new_line[2048];
+	while(list)
+	{
+	ft_printf("%s ", list->word);
+	list = list->next;
+	}
+}
+
+int		prompt(char **env)
+{
+	char				new_line[MAX_BUF];
 	t_history			*add;
 	int					quit;
 	t_line				line;
@@ -749,14 +739,16 @@ int		prompt()
 	while (!quit)
 	{
 		add = malloc(sizeof(t_history));
-		ft_bzero(new_line, 2048);
+		ft_bzero(new_line, MAX_BUF);
 		get_line("$> ",new_line, &line);
 		if (not_empty(new_line))
 		{
 			init_add(add, new_line);
 			add_history(&history, add);
 			list = command_to_words(new_line);
-			//ft_printf("\n");
+			print_words(list);
+			remove_quoting_list(list, env);
+			print_ww(list);
 			//print_words(list);
 			if (!err_in_words(list))
 			{
@@ -772,7 +764,9 @@ int		prompt()
 	return (0);
 }
 
-int		main()
+int		main(int ac, char **av, char **env)
 {
-	prompt();
+	(void)ac;
+	(void)av;
+	prompt(env);
 }
