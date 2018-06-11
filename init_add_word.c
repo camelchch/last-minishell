@@ -47,14 +47,14 @@ t_word		*init_add_word(char *line, int *i, int *j)
 	int		only_nb;
 
 	init_vari_for_add_word(&add, &only_nb, j);
-	if (open_dquote < 0 && open_squote < 0 && *i < ft_strlen(line) &&\
+	if (open_dquote < 0 && open_squote < 0 && *i < (int)ft_strlen(line) &&\
 			is_seprator_w(line, *i))
 		return (init_seprator(line, i));
 	else
 	{
 		add = malloc_add();
 		while ((open_dquote > 0 || open_squote > 0||\
-					!is_seprator_w(line, *i)) && *i < ft_strlen(line))
+					!is_seprator_w(line, *i)) && *i < (int)ft_strlen(line))
 		{
 			change(line, i, &only_nb);
 			add->word[*j] = line[*i];

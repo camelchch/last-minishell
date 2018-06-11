@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/11 12:54:19 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/11 13:09:33 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,11 +240,7 @@ typedef struct		s_helper{
 
 //execve(ls) out > execve(less) > open(file)
 
-t_word			*command_to_words(char *line);
-int				err_in_words(t_word *list);
-void			remove_quoting_list(t_word *list, char **env);// parsing.c 
 int				dslash_before(char *line, int index); //line_edition.c
-int				return_message(char *message, int re_value); //lexing.c
 
 // rm_quoting_in_word.c
 int				remove_quoting_word(char *word,char **env);
@@ -272,4 +268,14 @@ t_word			*command_to_words(char *line);
 // init_add_word.c
 t_word			*init_add_word(char *line, int *i, int *j);
 t_word			*malloc_add(void);
+
+//init_seprator.c
+t_word			*init_seprator(char *line,int *index);
+
+// for_init_seprator.c
+t_word			*pipe_or_type(char *line, int *index);
+t_word			*and_type(char *line, int *index);
+t_word			*semidot_type(char *line, int *index);
+int				return_message(char *message, int re_value);
+
 #endif

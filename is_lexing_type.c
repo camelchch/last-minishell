@@ -2,11 +2,11 @@
 
 int			is_seprator_w(char *line, int index)
 {
-	if (index < ft_strlen(line))
+	if (index < (int)ft_strlen(line))
 	{
 		if (line[index] == ' '  || line[index ] == '\t' || line[index] == '<')
 			return (1);
-		if (line[index] == '&' && index + 1 < ft_strlen(line) && \
+		if (line[index] == '&' && index + 1 < (int)ft_strlen(line) && \
 				line[index + 1] == '&')
 			return (1);
 		if (line[index] == '>' || line[index] == '|' || line[index] == ';')

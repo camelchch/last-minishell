@@ -67,9 +67,9 @@ t_word		*command_to_words(char *line)
 	res = NULL;
 	i = 0;
 	j = 0;
-	while (i < ft_strlen(line))
+	while (i < (int)ft_strlen(line))
 	{
-		if (i < ft_strlen(line))
+		if (i < (int)ft_strlen(line))
 		{
 			add = init_add_word(line, &i, &j);
 			if (add)
