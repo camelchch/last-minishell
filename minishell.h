@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/11 13:09:33 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/11 14:58:34 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,6 +241,9 @@ typedef struct		s_helper{
 //execve(ls) out > execve(less) > open(file)
 
 int				dslash_before(char *line, int index); //line_edition.c
+
+// sh_table.c
+//char			*ft_getenv(char **env,char *nm);
 
 // rm_quoting_in_word.c
 int				remove_quoting_word(char *word,char **env);

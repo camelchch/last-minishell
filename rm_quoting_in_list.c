@@ -5,7 +5,7 @@ static int		type_can_hv_quote(t_word *list)
 	return (list->type == PROGRAM || list->type == ARG || list->type == FILES);
 	return (0);
 }
-
+/*
 static int		include_quote(char *word)
 {
 	int		i;
@@ -19,6 +19,7 @@ static int		include_quote(char *word)
 	}
 	return (0);
 }
+*/
 
 void	change_part_str(char *ori, int start, int end, char *change)
 {

@@ -598,7 +598,7 @@ int		inclu_heredoc(char *line)
 	int		i;
 
 	i = -1;
-	while (++i < ft_strlen(line) - 2)
+	while (++i < (int)ft_strlen(line) - 2)
 	{
 		if (line[i] == '<' && line[i + 1] == '<' && line[i + 2] != '<')
 			return (i + 2);
@@ -696,9 +696,9 @@ void	my_here_doc(char *line)
 	temp_fd = open("./42sh_tmp.c", O_CREAT | O_TRUNC | O_RDWR | O_APPEND, S_IWUSR | S_IRUSR);
 	if (temp_fd < 0)
 		ft_printf("temp file failed to be opened\n");
-	while (i < ft_strlen(line) && line[i] == ' ')
+	while (i < (int)ft_strlen(line) && line[i] == ' ')
 		i++;
-	while (i < ft_strlen(line) && line[i] != ' ')
+	while (i < (int)ft_strlen(line) && line[i] != ' ')
 			doc_line.here_mark[j++] = line[i++];
 	while (!doc_line.here_end)
 	{
