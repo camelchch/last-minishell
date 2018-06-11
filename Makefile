@@ -6,7 +6,7 @@
 #    By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/06 21:06:58 by fsabatie          #+#    #+#              #
-#    Updated: 2018/05/02 11:37:03 by saxiao           ###   ########.fr        #
+#    Updated: 2018/06/11 11:54:08 by saxiao           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ NAME = minishell
 #SRC_PATH = srcs
 #INC_PATH = includes
 
-SRC = main.c  sh_table.c shell.c build_in.c pipes.c main.c
+SRC = line_edition.c rm_quoting_in_list.c rm_quoting_in_word.c print.c\
+		err_in_words.c
 
 LIB_NAME = libft.a
 PRINTF_NAME = libftprintf.a

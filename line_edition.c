@@ -746,7 +746,7 @@ int		prompt(char **env)
 			init_add(add, new_line);
 			add_history(&history, add);
 			list = command_to_words(new_line);
-			print_words(list);
+			print_words_type(list);
 			remove_quoting_list(list, env);
 			print_ww(list);
 			//print_words(list);

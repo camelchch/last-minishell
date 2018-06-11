@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/09 18:04:43 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/11 12:54:19 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,9 +241,35 @@ typedef struct		s_helper{
 //execve(ls) out > execve(less) > open(file)
 
 t_word			*command_to_words(char *line);
-void			print_words(t_word *list);
 int				err_in_words(t_word *list);
 void			remove_quoting_list(t_word *list, char **env);// parsing.c 
 int				dslash_before(char *line, int index); //line_edition.c
 int				return_message(char *message, int re_value); //lexing.c
+
+// rm_quoting_in_word.c
+int				remove_quoting_word(char *word,char **env);
+
+// remove_quoting_list.c
+void		change_part_str(char *ori, int start, int end, char *change);
+void		dollor_sign(t_helper *help, char *cp, char *vari);
+void		remove_quoting_list(t_word *list, char **env);
+
+// print.c
+void			print_words_type(t_word *list);
+
+// err_in_words.c
+int				err_in_words(t_word *list);
+int				program_exit_before(t_word *li);
+
+// is_lexing_type.c
+int				is_seprator_w(char *line, int index);
+int				is_redirector(t_type type);
+int				is_logic(t_type type);
+
+// command_to_words.c
+t_word			*command_to_words(char *line);
+
+// init_add_word.c
+t_word			*init_add_word(char *line, int *i, int *j);
+t_word			*malloc_add(void);
 #endif

@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "minishell.h"
 
-void		less_and(char *line, int *index, t_word *add)
+static void		less_and(char *line, int *index, t_word *add)
 {
 	if (*index + 2 < ft_strlen(line) && line[*index + 2] == '-' && \
 			(*index + 3 >= ft_strlen(line) || is_seprator_w(line, *line + 3 )))
@@ -76,51 +76,6 @@ t_word		*great_type(char *line, int *index)
 		add->type = GREAT;
 		*index = *index + 1;
 	}
-	return (add);
-}
-
-t_word		*pipe_or_type(char *line, int *index)
-{
-	t_word		*add;
-
-	add = malloc_add();
-	if (*index + 1 < ft_strlen(line) && line[*index + 1] == '|')
-	{
-		ft_strcpy(add->word, "||");
-		add->type = OR;
-		*index = *index + 2;
-	}
-	else
-	{
-		ft_strcpy(add->word, "|");
-		add->type = PIPE;
-		*index = *index + 1;
-	}
-	return (add);
-}
-
-t_word		*and_type(char *line, int *index)
-{
-	t_word		*add;
-
-	add = malloc_add();
-	if (*index + 1 < ft_strlen(line) && line[*index + 1] == '&')
-	{
-		ft_strcpy(add->word, "&&");
-		add->type = AND;
-		*index = *index + 2;
-	}
-	return (add);
-}
-
-t_word		*semidot_type(char *line, int *index)
-{
-	t_word		*add;
-
-	add = malloc_add();
-	ft_strcpy(add->word, ";");
-	add->type = SEMI_DOT;
-	*index = *index + 1;
 	return (add);
 }
 
