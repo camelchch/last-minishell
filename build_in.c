@@ -8,7 +8,7 @@ int		is_buildin(char *app)
 			!strcmp(app, "setenv") || !strcmp(app, "unsetenv") ||\
 			!strcmp(app, "env") || !strcmp(app, "exit"));
 }
-
+/*
 int		nb_str(char **paras)
 {
 	int		ct;
@@ -219,4 +219,4 @@ void	do_build(char **paras, char ***env, t_sh *table)
 	else if (!ft_strcmp(*paras, "exit"))
 		ft_exit();
 }
-
+*/

@@ -58,7 +58,7 @@ void	init_attr(int mod)
 		new.c_oflag &= ~(OPOST);
 		new.c_cc[VMIN] = 1;
 		new.c_cc[VTIME] = 0;
-//		new.c_cc[VTNTR] = 1;
+		//		new.c_cc[VTNTR] = 1;
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &new);
 		tgetent(NULL, getenv("TERM"));
 	}
@@ -308,13 +308,13 @@ int		printable(t_line *line, unsigned long key)
 		index = (line->buf_len + line->start_po) / line->line_max - (new_pos +line->start_po) / line->line_max;
 		while ( index-- > 0)
 			tputs(tgetstr("up", 0), 1, my_putc);
-	//	sleep(1);
+		//	sleep(1);
 		index = (line->buf_len + line->start_po) % line->line_max - (new_pos + line->start_po) % line->line_max;
 		positive = index >= 0 ? index : -index;
 		while (positive-- > 0)
 		{
 			tputs(tgetstr(index > 0 ? "le" : "nd" , 0), 1, my_putc);
-	//		sleep(1);
+			//		sleep(1);
 		}
 		line->pos = new_pos;
 	}
@@ -356,9 +356,9 @@ int				history_up(t_line *line)
 			line->his_mostdown = 0;
 		if (!line->last_his->pre)
 			line->his_mostup = 1;
-	if (line->up_indown  && !line->last_his->next)
-		line->one_his = 1;
-		}
+		if (line->up_indown  && !line->last_his->next)
+			line->one_his = 1;
+	}
 	return (0);
 }
 
@@ -384,11 +384,11 @@ int				history_down(t_line *line)
 		}
 		line->his_mostup = 0;
 		line->up_indown = 0;
-	if (!line->last_his->next)
-		line->his_mostdown = 0;
-	if (!line->last_his->pre)
-		line->his_mostup = 1;
-	line->one_his = 0;
+		if (!line->last_his->next)
+			line->his_mostdown = 0;
+		if (!line->last_his->pre)
+			line->his_mostup = 1;
+		line->one_his = 0;
 	}
 	else if (line->last_his && !line->last_his->next)
 		line->his_mostdown = 1;
@@ -494,14 +494,14 @@ int		go_up(t_line *line)
 		line->pos = line->pos - line->line_max;
 		sleep(1);
 		if ((line->pos + line->start_po) / line->line_max == 0 && \
-			(line->pos + line->start_po) % line->line_max < line->start_po)
+				(line->pos + line->start_po) % line->line_max < line->start_po)
 		{
 			i = line->start_po - (line->pos + line->start_po) % line->line_max;
 			while (i--)
 			{
 				move_right(line);
 				sleep (1);
-				}
+			}
 		}
 	}
 	return (0);
@@ -592,20 +592,6 @@ int		not_empty(char *new_line)
 	return (0);
 }
 
-//test if there is "<<", no return -1, yes return where heredoc starts
-int		inclu_heredoc(char *line)
-{
-	int		i;
-
-	i = -1;
-	while (++i < (int)ft_strlen(line) - 2)
-	{
-		if (line[i] == '<' && line[i + 1] == '<' && line[i + 2] != '<')
-			return (i + 2);
-	}
-	return (-1);
-}
-
 int		dslash_before(char *line, int index)
 {
 	int		i;
@@ -639,7 +625,7 @@ int		open_quote_exit(char *line)
 		else if (line[i] == '\'' && open_dquote < 0)
 			open_squote = -open_squote;
 		else if (line[i] == '\\' && open_dquote < 0 && open_squote < 0 && dslash_before(line, i) && !line[i + 1])
-		return(return_message("\nUnmatched \\ .", 1));
+			return(return_message("\nUnmatched \\ .", 1));
 	}
 	if (open_dquote > 0)
 		return(return_message("\nUnmatched \" .", 1));
@@ -660,7 +646,7 @@ int		get_line(char *prompt, char *new_line, t_line *line)
 		if (key == '\n')
 			break;
 		line->engine(line, key);
-		}
+	}
 	init_attr(SETOLD);
 	if (open_quote_exit((char *)line->buf))
 		ft_bzero(line->buf, MAX_BUF);
@@ -668,63 +654,32 @@ int		get_line(char *prompt, char *new_line, t_line *line)
 	return (0);
 }
 
-void	line_after_heredoc(char *line, int	after_mark, char *change)
-{
-	char	after[MAX_BUF];
-	int		i;
-
-	i = inclu_heredoc(line) - 2;
-	ft_bzero(after, MAX_BUF);
-	ft_strcpy(after, line + after_mark);
-	ft_bzero(line + i, MAX_BUF - i);
-	ft_strcat(line, " < ");
-	ft_strcat(line, change);
-	ft_strcat(line, after);
-}
-
-void	my_here_doc(char *line)
-{
-	int		i;
-	int		j;
-	int		temp_fd;
-	t_line	doc_line;
-
-	i = inclu_heredoc(line);
-	j = 0;
-	doc_line.here_end = 0;
-	ft_bzero(doc_line.here_mark, MAX_BUF);
-	temp_fd = open("./42sh_tmp.c", O_CREAT | O_TRUNC | O_RDWR | O_APPEND, S_IWUSR | S_IRUSR);
-	if (temp_fd < 0)
-		ft_printf("temp file failed to be opened\n");
-	while (i < (int)ft_strlen(line) && line[i] == ' ')
-		i++;
-	while (i < (int)ft_strlen(line) && line[i] != ' ')
-			doc_line.here_mark[j++] = line[i++];
-	while (!doc_line.here_end)
-	{
-		ft_bzero(doc_line.here_doc_buf, MAX_BUF);
-		get_line("\nheredoc> ",(char *)doc_line.here_doc_buf, &doc_line);
-		if (ft_strcmp((char *)doc_line.here_mark, (char *)doc_line.here_doc_buf))
-		{
-		if (write(temp_fd, doc_line.here_doc_buf, ft_strlen((char *)doc_line.here_doc_buf)) < 0)
-			ft_printf("write into temp file failed\n");
-			write(temp_fd, "\n",1);
-		}
-		else
-			doc_line.here_end = 1;
-	}
-	if (close(temp_fd) == -1)
-		ft_printf("close temp file failed\n");
-	line_after_heredoc(line, i, "./42sh_tmp.c");
-}
-
 void	print_ww(t_word *list)
 {
 	while(list)
 	{
-	ft_printf("%s ", list->word);
-	list = list->next;
+		ft_printf("%s ", list->word);
+		list = list->next;
 	}
+}
+
+void	actions_each_line(char **env, char *new_line, t_history *add, t_word *list)
+{
+
+	init_add(add, new_line);
+	add_history(&history, add);
+	list = command_to_words(new_line);
+	ft_printf("\n");
+		print_words_type(list);
+	print_ww(list);
+	//print_words(list);
+	if (!err_in_words(list))
+	{
+		remove_quoting_list(list, env);
+		my_here_doc_word(list);
+		print_words_type(list);
+			print_ww(list);
+		}
 }
 
 int		prompt(char **env)
@@ -736,30 +691,18 @@ int		prompt(char **env)
 	t_word				*list;
 
 	quit = 0;
+	ft_strcpy(temp_file, "./42sh_tmp.c");
 	while (!quit)
 	{
 		add = malloc(sizeof(t_history));
 		ft_bzero(new_line, MAX_BUF);
 		get_line("$> ",new_line, &line);
 		if (not_empty(new_line))
-		{
-			init_add(add, new_line);
-			add_history(&history, add);
-			list = command_to_words(new_line);
-			print_words_type(list);
-			remove_quoting_list(list, env);
-			print_ww(list);
-			//print_words(list);
-			if (!err_in_words(list))
-			{
-		if (inclu_heredoc(new_line) >= 0)
-			my_here_doc(new_line);
-			}
-		}
+			actions_each_line(env, new_line, add, list); 
 		ft_printf("\n");
 		if (!ft_strcmp(new_line, "exit"))
 			quit = 1;
-	//	ft_printf("new line =%s\n", new_line);
+		//	ft_printf("new line =%s\n", new_line);
 	}
 	return (0);
 }

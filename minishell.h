@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/11 14:58:34 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/11 19:10:40 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ typedef struct s_vari
 char		*get_autoline(t_sh *table);
 char		**path(char **env);
 int			calcu_index(char *name);
-int			is_buildin(char *app);
+int			is_buildin(char *app); // build_in.c
 char		**unset_env(char **paras, char **env);
 void		do_build(char **paras, char ***env, t_sh *table);
 void		put_env(char **env, char **paras, t_sh *table);
@@ -90,6 +90,7 @@ void		update_lastapp(char *lastcmd, char ***env);
 #define CONTRL_N 14
 #define CONTRL_F 6
 
+char	temp_file[MAX_BUF];
 
 typedef struct s_history
 {
@@ -104,7 +105,7 @@ typedef struct s_line
 	unsigned char	buf[MAX_BUF];
 	unsigned char	cp[MAX_BUF];
 	unsigned char	here_mark[MAX_BUF];
-	unsigned char	here_doc_buf[MAX_BUF];
+	unsigned char	here[MAX_BUF];
 	unsigned char	ici_doc[MAX_BUF];
 	int			buf_len;
 	int			line_max;
@@ -160,8 +161,8 @@ TOKEN >>>> BIN DLESS FILE  GREATAND BIN OPT FILE  PIPE  BIN
 */
 
 typedef enum s_token {
-	BIN = 0,
-	BUILTIN,
+	//BIN = 0,
+	//BUILTIN,
 //	OPT,
 //	ARG,
 	FILEREDI,
@@ -187,6 +188,7 @@ typedef enum s_type {
 	FILES, //20
 	FD, //21
 	HERE_DOC_MARK,
+	BUIDIN,
 }			t_type;
 
 typedef struct	s_word{
@@ -239,8 +241,9 @@ typedef struct		s_helper{
 
 
 //execve(ls) out > execve(less) > open(file)
-
+//line_edition.c
 int				dslash_before(char *line, int index); //line_edition.c
+int				get_line(char *prompt, char *new_line, t_line *line);
 
 // sh_table.c
 //char			*ft_getenv(char **env,char *nm);
@@ -281,4 +284,10 @@ t_word			*and_type(char *line, int *index);
 t_word			*semidot_type(char *line, int *index);
 int				return_message(char *message, int re_value);
 
+//my_here_doc.c
+void			my_here_doc(char *line);
+int				inclu_heredoc(char *new_line);
+
+// here_doc_bse_word.c
+void			my_here_doc_word(t_word *list);
 #endif

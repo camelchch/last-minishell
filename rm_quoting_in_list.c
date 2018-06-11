@@ -46,6 +46,8 @@ void	remove_quoting_list(t_word *list, char **env)
 		if (type_can_hv_quote(list))
 		{
 			remove_quoting_word(list->word, env);
+			if (list->type == PROGRAM && is_buildin(list->word))
+				list->type = BUIDIN;
 		}
 		list = list->next;
 	}

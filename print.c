@@ -39,6 +39,8 @@ void	print_words_type(t_word *list)
 			ft_printf("FILES ");
 		else if (cp->type == FD)
 			ft_printf("FD ");
+		else if (cp->type == BUIDIN)
+			ft_printf("BUIDIN ");
 		else if (cp->type == HERE_DOC_MARK)
 			ft_printf("HERE_DOC_MARK ");
 		cp = cp->next;
