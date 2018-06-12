@@ -663,23 +663,129 @@ void	print_ww(t_word *list)
 	}
 }
 
+int		inclu_pipe_eachbloc(t_word *list)
+{
+	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
+	{
+		if (list->type == PIPE)
+			return (1);
+		list = list->next;
+	}
+	return (0);
+}
+
+int		nb_args_each_exev(t_word *list)
+{
+	int		i;
+
+	i = 0;
+	while (list && is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
+	{
+		if (list->type == PROGRAM || list->type == BUIDIN || list->type == ARG)
+			i++;
+		list = list->next;
+	}
+	return (i);
+}
+
+char	**args_each_exev(t_word *list, char **env)
+{
+	char	**res;
+	int		i;
+
+	i = 0;
+	res = malloc(sizeof(char *) * (nb_args_each_exev(list) + 1));
+	while (list && is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
+	{
+		if (list->type == PROGRAM || list->type == BUIDIN || list->type == ARG)
+			res[i++] = list->word;
+		list = list->next;
+	}
+	res[i] = 0;
+	return(res);
+}
+
+void	redi_less(t_word *list)
+{
+	int		fd;
+	int		into_fd;
+
+	if (list->pre && list->pre->type == FD)
+		fd = ft_atoi(list->pre->word);
+	else
+		fd = 1;
+	into_fd = open(list->next->word, O_CREAT | O_TRUNC | O_RDWR, S_IWUSR | S_IRUSR);
+	if (into_fd)
+	dup2(1, into_fd);
+	else
+		ft_printf("open file failed\n");
+}
+
+void	actions_each_bloc(t_word *list, char **env)
+{
+	int		pipe_fd[2];
+	char	**pro_args;
+	int		nb_pid;
+
+	if (inclu_pipe_eachbloc(list))
+	{
+		if (pipe(pipe_fd) < 0)
+			ft_printf("pipe failed\n");
+	}
+	while (list && is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
+	{
+		if (list->type == LESS)
+			redi_less(list);
+		list = list->next;
+	}
+	pro_args = args_each_exev(list, env);
+	nb_pid = fork();
+	if (nb_pid < 0)
+		ft_printf("fork failed\n");
+	else if (nb_pid == 0)
+	{
+	ft_printf("jjjj000011111 in actions_each_bloc\n");
+		execve(pro_args[0], pro_args, env);
+	}
+	else
+		wait(0);
+}
+
+void	actions_blocs(t_word *list, char **env)
+{
+	t_word	*cp;
+	int		find_bloc;
+	int		find_err;
+
+	find_bloc = 0;
+	find_err = 0;
+	cp = list;
+	if (cp)
+	{
+		if (!remove_quoting_bloc(cp, env))
+		{
+
+			my_here_doc_word(list);
+			actions_each_bloc(list, env);
+		}
+	}
+	print_words_type(list);
+	print_ww(list);
+
+}
+
 void	actions_each_line(char **env, char *new_line, t_history *add, t_word *list)
 {
-
 	init_add(add, new_line);
 	add_history(&history, add);
 	list = command_to_words(new_line);
 	ft_printf("\n");
-		print_words_type(list);
+	print_words_type(list);
 	print_ww(list);
-	//print_words(list);
 	if (!err_in_words(list))
 	{
-		remove_quoting_list(list, env);
-		my_here_doc_word(list);
-		print_words_type(list);
-			print_ww(list);
-		}
+		actions_blocs(list, env);
+	}
 }
 
 int		prompt(char **env)

@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/11 19:10:40 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/12 12:36:26 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,6 +255,7 @@ int				remove_quoting_word(char *word,char **env);
 void		change_part_str(char *ori, int start, int end, char *change);
 void		dollor_sign(t_helper *help, char *cp, char *vari);
 void		remove_quoting_list(t_word *list, char **env);
+int			remove_quoting_bloc(t_word *list, char **env);
 
 // print.c
 void			print_words_type(t_word *list);

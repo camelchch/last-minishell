@@ -1,46 +1,38 @@
-42sh_tmp.c
-Makefile
-a.out
-author
-build_in.c
-build_in.o
-command_to_words.c
-command_to_words.o
-err.c
-err_in_words.c
-err_in_words.o
-fichier
-for_init_seprator.c
-for_init_seprator.o
-init_add_word.c
-init_add_word.o
-init_seprator.c
-init_seprator.o
-is_lexing_type.c
-is_lexing_type.o
-libft
-line_edition.c
-line_edition.o
-log
-main.c
-minishell
-minishell.dSYM
-minishell.h
-old_parsing.c
-parsing.h
-pipes.c
-print.c
-print.o
-rm_quoting_in_list.c
-rm_quoting_in_list.o
-rm_quoting_in_word.c
-rm_quoting_in_word.o
-sh_table.c
-sh_table.o
-shell.c
-shell.h
-test
-test.sh
-test1.c
-test_key
-try
+total 544
+-rw-r--r--   1 saxiao  2017_paris      6 Jun 11 19:08 42sh_tmp.c
+-rw-r--r--   1 saxiao  2017_paris   2197 Jun 11 18:57 Makefile
+-rwxr-xr-x   1 saxiao  2017_paris  62236 Jun 11 10:47 a.out
+-rw-r--r--   1 saxiao  2017_paris      7 May 29 16:19 author
+-rw-r--r--   1 saxiao  2017_paris   4014 Jun 11 15:54 build_in.c
+-rw-r--r--   1 saxiao  2017_paris   1186 Jun 11 15:32 command_to_words.c
+-rw-r--r--   1 saxiao  2017_paris      0 Jun 12 10:57 err.c
+-rw-r--r--   1 saxiao  2017_paris   1891 Jun 11 12:29 err_in_words.c
+-rw-r--r--   1 saxiao  2017_paris   2274 Jun  6 15:42 fichier
+-rw-r--r--   1 saxiao  2017_paris    888 Jun 11 13:14 for_init_seprator.c
+-rw-r--r--   1 saxiao  2017_paris   1461 Jun 11 19:10 here_doc_bse_word.c
+-rw-r--r--   1 saxiao  2017_paris   1459 Jun 11 13:17 init_add_word.c
+-rw-r--r--   1 saxiao  2017_paris   2205 Jun 11 13:16 init_seprator.c
+-rw-r--r--   1 saxiao  2017_paris    626 Jun 11 13:20 is_lexing_type.c
+drwxr-xr-x  71 saxiao  2017_paris   2414 Jun 11 19:10 libft
+-rw-r--r--   1 saxiao  2017_paris  13983 Jun 11 19:10 line_edition.c
+-rw-r--r--   1 saxiao  2017_paris    307 May 29 16:19 log
+-rw-r--r--   1 saxiao  2017_paris   3201 May 29 16:19 main.c
+-rwxr-xr-x   1 saxiao  2017_paris  62148 Jun 11 19:08 minishell
+drwxr-xr-x   3 saxiao  2017_paris    102 May 29 16:19 minishell.dSYM
+-rw-r--r--   1 saxiao  2017_paris   7241 Jun 11 19:10 minishell.h
+-rw-r--r--   1 saxiao  2017_paris   3239 Jun 11 18:39 my_here_doc.c
+-rw-r--r--   1 saxiao  2017_paris   3264 Jun 11 18:19 my_here_doc.o
+-rw-r--r--   1 saxiao  2017_paris    748 May 31 17:21 old_parsing.c
+-rw-r--r--   1 saxiao  2017_paris   1362 Jun  9 15:53 parsing.h
+-rw-r--r--   1 saxiao  2017_paris   1712 Jun 11 16:44 pipes.c
+-rw-r--r--   1 saxiao  2017_paris   1136 Jun 11 16:20 print.c
+-rw-r--r--   1 saxiao  2017_paris   1036 Jun 11 15:39 rm_quoting_in_list.c
+-rw-r--r--   1 saxiao  2017_paris   1644 Jun 11 15:34 rm_quoting_in_word.c
+-rw-r--r--   1 saxiao  2017_paris   2242 May 29 16:19 sh_table.c
+-rw-r--r--   1 saxiao  2017_paris   3333 May 29 16:19 shell.c
+-rw-r--r--   1 saxiao  2017_paris    757 May 29 16:19 shell.h
+-rw-r--r--   1 saxiao  2017_paris    219 May 29 16:19 test
+-rw-r--r--   1 saxiao  2017_paris     72 May 29 16:19 test.sh
+-rw-r--r--   1 saxiao  2017_paris    813 May 29 16:39 test1.c
+-rw-r--r--   1 saxiao  2017_paris    855 May 29 16:19 test_key
+-rw-r--r--   1 saxiao  2017_paris    910 May 29 16:19 try
