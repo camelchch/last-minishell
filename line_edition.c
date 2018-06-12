@@ -679,7 +679,7 @@ int		nb_args_each_exev(t_word *list)
 	int		i;
 
 	i = 0;
-	while (list && is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
+	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 	{
 		if (list->type == PROGRAM || list->type == BUIDIN || list->type == ARG)
 			i++;
@@ -694,8 +694,9 @@ char	**args_each_exev(t_word *list, char **env)
 	int		i;
 
 	i = 0;
+	ft_printf("%d\n", nb_args_each_exev(list));
 	res = malloc(sizeof(char *) * (nb_args_each_exev(list) + 1));
-	while (list && is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
+	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 	{
 		if (list->type == PROGRAM || list->type == BUIDIN || list->type == ARG)
 			res[i++] = list->word;
@@ -716,7 +717,7 @@ void	redi_less(t_word *list)
 		fd = 1;
 	into_fd = open(list->next->word, O_CREAT | O_TRUNC | O_RDWR, S_IWUSR | S_IRUSR);
 	if (into_fd)
-	dup2(1, into_fd);
+	dup2(into_fd, 1);
 	else
 		ft_printf("open file failed\n");
 }
@@ -734,11 +735,12 @@ void	actions_each_bloc(t_word *list, char **env)
 	}
 	while (list && is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 	{
-		if (list->type == LESS)
-			redi_less(list);
+	//	if (list->type == LESS)
+	//		redi_less(list);
 		list = list->next;
 	}
 	pro_args = args_each_exev(list, env);
+	ft_printf("%s\n",pro_args[0]);
 	nb_pid = fork();
 	if (nb_pid < 0)
 		ft_printf("fork failed\n");
@@ -746,6 +748,7 @@ void	actions_each_bloc(t_word *list, char **env)
 	{
 	ft_printf("jjjj000011111 in actions_each_bloc\n");
 		execve(pro_args[0], pro_args, env);
+	ft_printf("failed\n");
 	}
 	else
 		wait(0);
@@ -764,13 +767,13 @@ void	actions_blocs(t_word *list, char **env)
 	{
 		if (!remove_quoting_bloc(cp, env))
 		{
-
+ft_printf("99999999\n");
 			my_here_doc_word(list);
 			actions_each_bloc(list, env);
 		}
 	}
-	print_words_type(list);
-	print_ww(list);
+	//print_words_type(list);
+	//print_ww(list);
 
 }
 

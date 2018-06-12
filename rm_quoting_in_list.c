@@ -66,11 +66,11 @@ int		remove_quoting_bloc(t_word *list, char **env)
 				return (1);
 			if (list->type == PROGRAM && is_buildin(list->word))
 				list->type = BUIDIN;
-			if (list->next || is_logic(list->next->type) || list->next->type == SEMI_DOT)
+				}
+			if (!list->next || is_logic(list->next->type) || list->next->type == SEMI_DOT)
 				find_bloc = 1;
 			else
 				list = list->next;
-		}
 	}
 	return (0);
 }
