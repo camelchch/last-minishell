@@ -663,15 +663,18 @@ void	print_ww(t_word *list)
 	}
 }
 
-int		inclu_pipe_eachbloc(t_word *list)
+int		nb_pipe_eachbloc(t_word *list)
 {
+	int		i;
+
+	i = 0;
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
 	{
 		if (list->type == PIPE)
-			return (1);
+			i++;
 		list = list->next;
 	}
-	return (0);
+	return (i);
 }
 
 int		nb_args_each_exev(t_word *list)
@@ -725,20 +728,26 @@ void	redi_great(t_word *list)
 		ft_printf("open file failed\n");
 }
 
-void	do_all_redirection(t_word *list, int nb_program)
+void	do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro)
 {
+	if (nb_pipe)
+	{
+		if (nb_pro)
+			dup2(pipe_fd[0], 0);
+		if (nb_pro < nb_pipe)
+			dup2(pipe_fd[1], 1);
+		if (nb_pro == nb_pipe)
+			close(pipe_fd[1]);
+		if (!nb_pro)
+			close(pipe_fd[0]);
+	}
+
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 	{
 		if (list->type == GREAT)
 			redi_great(list);
 		list = list->next;
 	}
-	if (nb_program)
-	{
-//	if (dup2(1, 0) < 0)
-		ft_printf("dup2 failed\n");
-	}
-
 }
 
 void	init_pid_table(int *table, int len)
@@ -750,36 +759,42 @@ void	init_pid_table(int *table, int len)
 		table[i] = -1;
 }
 
+
 void	actions_each_bloc(t_word *list, char **env)
 {
-	int			pipe_fd[2];
+	int			pipe_fd[MAX_BUF];
 	t_program	pro[MAX_BUF];
 	int			nb_pid[MAX_BUF];
 	int			i;
 	int			j;
-/*
-	if (inclu_pipe_eachbloc(list))
+	int			nb_pipe;
+
+	nb_pipe = nb_pipe_eachbloc(list);
+	if (nb_pipe)
 	{
 		if (pipe(pipe_fd) < 0)
-			ft_printf("pipe failed\n");
+			perror("pipe()");
 	}
-	*/
 	i = -1;
 	j = 0;
 	ft_bzero(pro, sizeof(pro));
 	init_pid_table(nb_pid, MAX_BUF);
+	init_pid_table(pipe_fd, MAX_BUF);
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
 	{
 	pro[++i].pro_args = args_each_exev(list, env);
 	nb_pid[i] = fork();
 	if (nb_pid[i] < 0)
-		ft_printf("fork failed\n");
+		perror("fork()");
 	else if (nb_pid[i] == 0)
 	{
-	do_all_redirection(list, i);
+	do_all_redirection(list, pipe_fd, nb_pipe, i);
+
 	execve((pro[i].pro_args)[0], pro[i].pro_args, env);
 	ft_printf("failed\n");
 	}
+			close(pipe_fd[0]);
+			close(pipe_fd[1]);
 	ft_printf("inside actions_each_bloc  00000\n");
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 		list = list->next;
@@ -789,8 +804,10 @@ void	actions_each_bloc(t_word *list, char **env)
 	}
 	while (j <= i)
 	{
+		//if (nb_pipe)
+		//	close(pipe_fd[1]);
 		if (waitpid(nb_pid[j++], NULL, 0) < 0)
-			ft_printf("wait failed\n");
+			perror("wait()");
 	}
 }
 
