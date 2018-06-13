@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/12 12:36:26 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/13 12:15:06 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,6 +238,9 @@ typedef struct		s_helper{
 }					t_helper;
 //ls | less
 
+typedef struct s_program {
+		char	**pro_args;
+}				t_program;
 
 
 //execve(ls) out > execve(less) > open(file)

@@ -694,7 +694,6 @@ char	**args_each_exev(t_word *list, char **env)
 	int		i;
 
 	i = 0;
-	ft_printf("%d\n", nb_args_each_exev(list));
 	res = malloc(sizeof(char *) * (nb_args_each_exev(list) + 1));
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 	{
@@ -706,7 +705,7 @@ char	**args_each_exev(t_word *list, char **env)
 	return(res);
 }
 
-void	redi_less(t_word *list)
+void	redi_great(t_word *list)
 {
 	int		fd;
 	int		into_fd;
@@ -717,41 +716,82 @@ void	redi_less(t_word *list)
 		fd = 1;
 	into_fd = open(list->next->word, O_CREAT | O_TRUNC | O_RDWR, S_IWUSR | S_IRUSR);
 	if (into_fd)
-	dup2(into_fd, 1);
+	{
+	if (dup2(into_fd, fd) < 0)
+		ft_printf("dup2 failed\n");
+	close(into_fd);
+	}
 	else
 		ft_printf("open file failed\n");
 }
 
+void	do_all_redirection(t_word *list, int nb_program)
+{
+	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
+	{
+		if (list->type == GREAT)
+			redi_great(list);
+		list = list->next;
+	}
+	if (nb_program)
+	{
+//	if (dup2(1, 0) < 0)
+		ft_printf("dup2 failed\n");
+	}
+
+}
+
+void	init_pid_table(int *table, int len)
+{
+	int		i;
+
+	i = -1;
+	while (++i < len)
+		table[i] = -1;
+}
+
 void	actions_each_bloc(t_word *list, char **env)
 {
-	int		pipe_fd[2];
-	char	**pro_args;
-	int		nb_pid;
-
+	int			pipe_fd[2];
+	t_program	pro[MAX_BUF];
+	int			nb_pid[MAX_BUF];
+	int			i;
+	int			j;
+/*
 	if (inclu_pipe_eachbloc(list))
 	{
 		if (pipe(pipe_fd) < 0)
 			ft_printf("pipe failed\n");
 	}
-	while (list && is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
+	*/
+	i = -1;
+	j = 0;
+	ft_bzero(pro, sizeof(pro));
+	init_pid_table(nb_pid, MAX_BUF);
+	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
 	{
-	//	if (list->type == LESS)
-	//		redi_less(list);
-		list = list->next;
-	}
-	pro_args = args_each_exev(list, env);
-	ft_printf("%s\n",pro_args[0]);
-	nb_pid = fork();
-	if (nb_pid < 0)
+	pro[++i].pro_args = args_each_exev(list, env);
+	nb_pid[i] = fork();
+	if (nb_pid[i] < 0)
 		ft_printf("fork failed\n");
-	else if (nb_pid == 0)
+	else if (nb_pid[i] == 0)
 	{
-	ft_printf("jjjj000011111 in actions_each_bloc\n");
-		execve(pro_args[0], pro_args, env);
+	do_all_redirection(list, i);
+	execve((pro[i].pro_args)[0], pro[i].pro_args, env);
 	ft_printf("failed\n");
 	}
-	else
-		wait(0);
+	ft_printf("inside actions_each_bloc  00000\n");
+	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
+		list = list->next;
+	ft_printf("list here is %s\n", list->word);
+	if (list && list->type == PIPE)
+		list = list->next;
+	}
+	while (j <= i)
+	{
+		if (waitpid(nb_pid[j++], NULL, 0) < 0)
+			ft_printf("wait failed\n");
+	}
 }
 
 void	actions_blocs(t_word *list, char **env)
@@ -767,14 +807,10 @@ void	actions_blocs(t_word *list, char **env)
 	{
 		if (!remove_quoting_bloc(cp, env))
 		{
-ft_printf("99999999\n");
 			my_here_doc_word(list);
 			actions_each_bloc(list, env);
 		}
 	}
-	//print_words_type(list);
-	//print_ww(list);
-
 }
 
 void	actions_each_line(char **env, char *new_line, t_history *add, t_word *list)
