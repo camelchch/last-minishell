@@ -728,18 +728,34 @@ void	redi_great(t_word *list)
 		ft_printf("open file failed\n");
 }
 
+void	close_all_pipe(int *pipe_fd, int nb_pipe)
+{
+	int		i;
+
+	i = 0;
+	while (i < nb_pipe * 2)
+		close(pipe_fd[i++]);
+}
+
 void	do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro)
 {
 	if (nb_pipe)
 	{
+	if (nb_pro > 0)
+		close(pipe_fd[nb_pro * 2 - 1]);
 		if (nb_pro)
-			dup2(pipe_fd[0], 0);
+		{
+			if (dup2(pipe_fd[nb_pro * 2 - 2], 0) < 0)
+				perror("dup2()");
+		}
 		if (nb_pro < nb_pipe)
-			dup2(pipe_fd[1], 1);
+			dup2(pipe_fd[nb_pro * 2 + 1], 1);
+			/*
 		if (nb_pro == nb_pipe)
 			close(pipe_fd[1]);
 		if (!nb_pro)
 			close(pipe_fd[0]);
+			*/
 	}
 
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
@@ -759,6 +775,19 @@ void	init_pid_table(int *table, int len)
 		table[i] = -1;
 }
 
+void	do_all_pipe(int *pipe_fd, int nb_pipe)
+{
+	int		i;
+
+	i = 0;
+	while (++i <= nb_pipe)
+	{
+		if (pipe(pipe_fd) < 0)
+			perror("pipe()");
+		pipe_fd = pipe_fd + 2;
+	}
+}
+
 
 void	actions_each_bloc(t_word *list, char **env)
 {
@@ -770,19 +799,17 @@ void	actions_each_bloc(t_word *list, char **env)
 	int			nb_pipe;
 
 	nb_pipe = nb_pipe_eachbloc(list);
-	if (nb_pipe)
-	{
-		if (pipe(pipe_fd) < 0)
-			perror("pipe()");
-	}
 	i = -1;
 	j = 0;
 	ft_bzero(pro, sizeof(pro));
 	init_pid_table(nb_pid, MAX_BUF);
 	init_pid_table(pipe_fd, MAX_BUF);
+	do_all_pipe(pipe_fd, nb_pipe);
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
 	{
 	pro[++i].pro_args = args_each_exev(list, env);
+	if (i > 0)
+		close(pipe_fd[i * 2 - 1]);
 	nb_pid[i] = fork();
 	if (nb_pid[i] < 0)
 		perror("fork()");
@@ -793,8 +820,6 @@ void	actions_each_bloc(t_word *list, char **env)
 	execve((pro[i].pro_args)[0], pro[i].pro_args, env);
 	ft_printf("failed\n");
 	}
-			close(pipe_fd[0]);
-			close(pipe_fd[1]);
 	ft_printf("inside actions_each_bloc  00000\n");
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 		list = list->next;
@@ -804,6 +829,7 @@ void	actions_each_bloc(t_word *list, char **env)
 	}
 	while (j <= i)
 	{
+		close_all_pipe(pipe_fd, nb_pipe);
 		//if (nb_pipe)
 		//	close(pipe_fd[1]);
 		if (waitpid(nb_pid[j++], NULL, 0) < 0)
