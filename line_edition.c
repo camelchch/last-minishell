@@ -720,9 +720,9 @@ void	redi_great(t_word *list)
 	into_fd = open(list->next->word, O_CREAT | O_TRUNC | O_RDWR, S_IWUSR | S_IRUSR);
 	if (into_fd)
 	{
-	if (dup2(into_fd, fd) < 0)
-		ft_printf("dup2 failed\n");
-	close(into_fd);
+		if (dup2(into_fd, fd) < 0)
+			ft_printf("dup2 failed\n");
+		close(into_fd);
 	}
 	else
 		ft_printf("open file failed\n");
@@ -741,21 +741,24 @@ void	do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro)
 {
 	if (nb_pipe)
 	{
-	if (nb_pro > 0)
-		close(pipe_fd[nb_pro * 2 - 1]);
+		if (nb_pro > 0)
+			close(pipe_fd[nb_pro * 2 - 1]);
 		if (nb_pro)
 		{
 			if (dup2(pipe_fd[nb_pro * 2 - 2], 0) < 0)
 				perror("dup2()");
 		}
 		if (nb_pro < nb_pipe)
-			dup2(pipe_fd[nb_pro * 2 + 1], 1);
-			/*
-		if (nb_pro == nb_pipe)
-			close(pipe_fd[1]);
-		if (!nb_pro)
-			close(pipe_fd[0]);
-			*/
+		{
+			if (dup2(pipe_fd[nb_pro * 2 + 1], 1) < 0)
+				perror("dup2()");
+		}
+		/*
+		   if (nb_pro == nb_pipe)
+		   close(pipe_fd[1]);
+		   if (!nb_pro)
+		   close(pipe_fd[0]);
+		   */
 	}
 
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
@@ -799,6 +802,7 @@ void	actions_each_bloc(t_word *list, char **env)
 	int			nb_pipe;
 
 	nb_pipe = nb_pipe_eachbloc(list);
+	ft_printf("nb of pipe %d\n", nb_pipe);
 	i = -1;
 	j = 0;
 	ft_bzero(pro, sizeof(pro));
@@ -807,25 +811,25 @@ void	actions_each_bloc(t_word *list, char **env)
 	do_all_pipe(pipe_fd, nb_pipe);
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
 	{
-	pro[++i].pro_args = args_each_exev(list, env);
-	if (i > 0)
-		close(pipe_fd[i * 2 - 1]);
-	nb_pid[i] = fork();
-	if (nb_pid[i] < 0)
-		perror("fork()");
-	else if (nb_pid[i] == 0)
-	{
-	do_all_redirection(list, pipe_fd, nb_pipe, i);
+		pro[++i].pro_args = args_each_exev(list, env);
+		if (i > 0)
+			close(pipe_fd[i * 2 - 1]);
+		nb_pid[i] = fork();
+		if (nb_pid[i] < 0)
+			perror("fork()");
+		else if (nb_pid[i] == 0)
+		{
+			do_all_redirection(list, pipe_fd, nb_pipe, i);
 
-	execve((pro[i].pro_args)[0], pro[i].pro_args, env);
-	ft_printf("failed\n");
-	}
-	ft_printf("inside actions_each_bloc  00000\n");
-	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
-		list = list->next;
-	ft_printf("list here is %s\n", list->word);
-	if (list && list->type == PIPE)
-		list = list->next;
+			execve((pro[i].pro_args)[0], pro[i].pro_args, env);
+			ft_printf("failed\n");
+		}
+		ft_printf("inside actions_each_bloc  00000\n");
+		while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
+			list = list->next;
+		ft_printf("list here is %s\n", list->word);
+		if (list && list->type == PIPE)
+			list = list->next;
 	}
 	while (j <= i)
 	{
@@ -856,11 +860,8 @@ void	actions_blocs(t_word *list, char **env)
 	}
 }
 
-void	actions_each_line(char **env, char *new_line, t_history *add, t_word *list)
+void	actions_each_line(char **env, t_word *list)
 {
-	init_add(add, new_line);
-	add_history(&history, add);
-	list = command_to_words(new_line);
 	ft_printf("\n");
 	print_words_type(list);
 	print_ww(list);
@@ -870,7 +871,7 @@ void	actions_each_line(char **env, char *new_line, t_history *add, t_word *list)
 	}
 }
 
-int		prompt(char **env)
+int		prompt(char **env, t_sh *table)
 {
 	char				new_line[MAX_BUF];
 	t_history			*add;
@@ -879,6 +880,7 @@ int		prompt(char **env)
 	t_word				*list;
 
 	quit = 0;
+	(void)table;
 	ft_strcpy(temp_file, "./42sh_tmp.c");
 	while (!quit)
 	{
@@ -886,7 +888,12 @@ int		prompt(char **env)
 		ft_bzero(new_line, MAX_BUF);
 		get_line("$> ",new_line, &line);
 		if (not_empty(new_line))
-			actions_each_line(env, new_line, add, list); 
+		{
+			init_add(add, new_line);
+			add_history(&history, add);
+			list = command_to_words(new_line);
+			actions_each_line(env, list);
+		}
 		ft_printf("\n");
 		if (!ft_strcmp(new_line, "exit"))
 			quit = 1;
@@ -895,9 +902,3 @@ int		prompt(char **env)
 	return (0);
 }
 
-int		main(int ac, char **av, char **env)
-{
-	(void)ac;
-	(void)av;
-	prompt(env);
-}

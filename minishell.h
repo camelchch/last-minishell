@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/13 12:15:06 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/14 14:29:41 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,24 +40,42 @@ typedef struct s_vari
 }			t_vari;
 
 char		*get_autoline(t_sh *table);
-char		**path(char **env);
-int			calcu_index(char *name);
-int			is_buildin(char *app); // build_in.c
-char		**unset_env(char **paras, char **env);
 void		do_build(char **paras, char ***env, t_sh *table);
-void		put_env(char **env, char **paras, t_sh *table);
-char		*ft_getenv(char **env, char *name);//sh_table.c
-void		init_shtable(t_sh *table, char **path);
 void		shell(int ac, char **av, char **env, t_sh *table);
 void		child_pro(char **paras, char **env, t_sh *table);
 void		each_cmdline(char *cmdline, char **env, t_sh *table);
 void		pipes(char *cmdline, int nb_pipe, char ***env, t_sh *table);
 int			no_pipe(char *cmdline);
 void		signal_quith(int sign);
-void		put_strstr(char **str);
-void		set_env(char **paras, char ***env);
+//void		ft_freestrstr(char **cp_env);
+
+//sh_table.c
+char		*ft_getenv(char **env, char *name);
+char		**path(char **env);
+int			calcu_index(char *name);
+void		init_shtable(t_sh *table, char **path);
+
+//update_env.c
 void		update_shlvl(char ***env);
 void		update_lastapp(char *lastcmd, char ***env);
+
+//set_unset_env
+int			nb_str(char **str);
+void		set_env(char **paras, char ***env);
+char		**unset_env(char **paras, char **env);
+
+//build_in_1.c
+int			is_buildin(char *app);
+
+//build_in_cd.c
+int			cd(char **paras, char ***env);
+
+//build_in_env.c
+int			put_env(char **env, char **paras, t_sh *table);
+void		put_strstr(char **str); //main.c
+
+
+
 #include <stdio.h>
 //#ifndef SHELL_SH
 //#define SHELL_SH
@@ -247,6 +265,7 @@ typedef struct s_program {
 //line_edition.c
 int				dslash_before(char *line, int index); //line_edition.c
 int				get_line(char *prompt, char *new_line, t_line *line);
+int				prompt(char **env, t_sh *table);
 
 // sh_table.c
 //char			*ft_getenv(char **env,char *nm);
