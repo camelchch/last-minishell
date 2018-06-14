@@ -2,7 +2,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-void	echo(char **paras)
+int		is_buildin(char *app)
+{
+	return (!strcmp(app, "echo") || !strcmp(app, "cd") ||\
+			!strcmp(app, "setenv") || !strcmp(app, "unsetenv") ||\
+			!strcmp(app, "env") || !strcmp(app, "exit"));
+}
+
+static void	echo(char **paras)
 {
 	int		ct;
 
@@ -18,7 +25,7 @@ void	echo(char **paras)
 	}
 }
 
-void	ft_exit(void)
+static void	ft_exit(void)
 {
 	exit(0);
 }

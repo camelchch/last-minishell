@@ -737,6 +737,16 @@ void	close_all_pipe(int *pipe_fd, int nb_pipe)
 		close(pipe_fd[i++]);
 }
 
+void	all_case_redirection(t_word *list)
+{
+	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
+	{
+		if (list->type == GREAT)
+			redi_great(list);
+		list = list->next;
+	}
+}
+
 void	do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro)
 {
 	if (nb_pipe)
@@ -753,20 +763,8 @@ void	do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro)
 			if (dup2(pipe_fd[nb_pro * 2 + 1], 1) < 0)
 				perror("dup2()");
 		}
-		/*
-		   if (nb_pro == nb_pipe)
-		   close(pipe_fd[1]);
-		   if (!nb_pro)
-		   close(pipe_fd[0]);
-		   */
 	}
-
-	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
-	{
-		if (list->type == GREAT)
-			redi_great(list);
-		list = list->next;
-	}
+	all_case_redirection(list);
 }
 
 void	init_pid_table(int *table, int len)
@@ -791,8 +789,16 @@ void	do_all_pipe(int *pipe_fd, int nb_pipe)
 	}
 }
 
+void	pro_is_buildin_no_pipe(t_word *list, char **env, t_sh *table)
+{
+	char	**pro_args;
 
-void	actions_each_bloc(t_word *list, char **env)
+	pro_args = args_each_exev(list, env);
+	all_case_redirection(list);
+	do_build(pro_args, &env, table);
+}
+
+void	actions_each_bloc(t_word *list, char **env, t_sh *table)
 {
 	int			pipe_fd[MAX_BUF];
 	t_program	pro[MAX_BUF];
@@ -820,8 +826,8 @@ void	actions_each_bloc(t_word *list, char **env)
 		else if (nb_pid[i] == 0)
 		{
 			do_all_redirection(list, pipe_fd, nb_pipe, i);
+			child_pro_bin(pro[i].pro_args, env, table);
 
-			execve((pro[i].pro_args)[0], pro[i].pro_args, env);
 			ft_printf("failed\n");
 		}
 		ft_printf("inside actions_each_bloc  00000\n");
@@ -841,7 +847,7 @@ void	actions_each_bloc(t_word *list, char **env)
 	}
 }
 
-void	actions_blocs(t_word *list, char **env)
+void	actions_blocs(t_word *list, char **env, t_sh *table)
 {
 	t_word	*cp;
 	int		find_bloc;
@@ -855,19 +861,20 @@ void	actions_blocs(t_word *list, char **env)
 		if (!remove_quoting_bloc(cp, env))
 		{
 			my_here_doc_word(list);
-			actions_each_bloc(list, env);
+	print_words_type(list);
+			actions_each_bloc(list, env, table);
 		}
 	}
 }
 
-void	actions_each_line(char **env, t_word *list)
+void	actions_each_line(char **env, t_word *list, t_sh *table)
 {
 	ft_printf("\n");
 	print_words_type(list);
 	print_ww(list);
 	if (!err_in_words(list))
 	{
-		actions_blocs(list, env);
+		actions_blocs(list, env, table);
 	}
 }
 
@@ -892,7 +899,7 @@ int		prompt(char **env, t_sh *table)
 			init_add(add, new_line);
 			add_history(&history, add);
 			list = command_to_words(new_line);
-			actions_each_line(env, list);
+			actions_each_line(env, list, table);
 		}
 		ft_printf("\n");
 		if (!ft_strcmp(new_line, "exit"))

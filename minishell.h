@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/14 14:29:41 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/14 17:13:13 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 #ifndef MINISHELL_H
 int		open_dquote;
 int		open_squote;
+
+#define MAX_BUF 2048
 
 typedef struct s_table
 {
@@ -39,10 +41,36 @@ typedef struct s_vari
 	pid_t	pid;
 }			t_vari;
 
+typedef enum s_type {
+	PROGRAM = 10,
+	ARG, //11
+	LESS,//< 12
+	LESSAND,// <&
+	LESSANDMINUS,// <&-
+	DLESS, //<< 13
+	AND, //&& 14
+	GREAT, //> 15
+	GREATAND, // >& 15
+	GREATANDMINUS, // >&- 15
+	DGREAT, //>> 16
+	OR,//|| 17
+	PIPE, //| 18
+	SEMI_DOT, // 19;
+	FILES, //20
+	FD, //21
+	HERE_DOC_MARK,
+	BUIDIN,
+}			t_type;
+
+typedef struct	s_word{
+	char			word[MAX_BUF];
+	t_type			type;
+	struct s_word	*next;
+	struct s_word	*pre;
+}				t_word;
+
 char		*get_autoline(t_sh *table);
-void		do_build(char **paras, char ***env, t_sh *table);
 void		shell(int ac, char **av, char **env, t_sh *table);
-void		child_pro(char **paras, char **env, t_sh *table);
 void		each_cmdline(char *cmdline, char **env, t_sh *table);
 void		pipes(char *cmdline, int nb_pipe, char ***env, t_sh *table);
 int			no_pipe(char *cmdline);
@@ -64,8 +92,9 @@ int			nb_str(char **str);
 void		set_env(char **paras, char ***env);
 char		**unset_env(char **paras, char **env);
 
-//build_in_1.c
+//do_buildin.c
 int			is_buildin(char *app);
+void		do_build(char **paras, char ***env, t_sh *table);
 
 //build_in_cd.c
 int			cd(char **paras, char ***env);
@@ -73,6 +102,10 @@ int			cd(char **paras, char ***env);
 //build_in_env.c
 int			put_env(char **env, char **paras, t_sh *table);
 void		put_strstr(char **str); //main.c
+
+//child_program.c
+void		child_pro_bin(char **paras, char **env, t_sh *table);
+void		child_pro_buildin(t_word *list, char **paras, char **env, t_sh *table);
 
 
 
@@ -82,7 +115,6 @@ void		put_strstr(char **str); //main.c
 
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
-#define MAX_BUF 2048
 #define NB_KEY 18
 #define	ARROW_LEFT 4479771
 #define ARROW_RIGHT 4414235
@@ -188,33 +220,6 @@ typedef enum s_token {
 	//FILES,
 }			t_token;
 
-typedef enum s_type {
-	PROGRAM = 10,
-	ARG, //11
-	LESS,//< 12
-	LESSAND,// <&
-	LESSANDMINUS,// <&-
-	DLESS, //<< 13
-	AND, //&& 14
-	GREAT, //> 15
-	GREATAND, // >& 15
-	GREATANDMINUS, // >&- 15
-	DGREAT, //>> 16
-	OR,//|| 17
-	PIPE, //| 18
-	SEMI_DOT, // 19;
-	FILES, //20
-	FD, //21
-	HERE_DOC_MARK,
-	BUIDIN,
-}			t_type;
-
-typedef struct	s_word{
-	char			word[MAX_BUF];
-	t_type			type;
-	struct s_word	*next;
-	struct s_word	*pre;
-}				t_word;
 /*
 t_list *l;
 
@@ -266,6 +271,8 @@ typedef struct s_program {
 int				dslash_before(char *line, int index); //line_edition.c
 int				get_line(char *prompt, char *new_line, t_line *line);
 int				prompt(char **env, t_sh *table);
+char			**args_each_exev(t_word *list, char **env);
+void			all_case_redirection(t_word *list);
 
 // sh_table.c
 //char			*ft_getenv(char **env,char *nm);
