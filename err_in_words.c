@@ -46,21 +46,21 @@ int		err_in_words(t_word *cp)
 	while (cp)
 	{
 		if (test_for_err_func(cp))
-			return (return_message("\nMissing name for redirect.\n",1));
+			return (return_message("\nMissing name for redirect.\n",1, 1));
 		if (cp->type == DLESS)
 		{
 			if (!cp->next || cp->next->type != HERE_DOC_MARK)
-				return (return_message("\nMissing name for redirect.\n",1));
+				return (return_message("\nMissing name for redirect.\n",1, 1));
 			if (heredoc_exit_before(cp->pre))
-				return (return_message("\nAmbiguous input redirect.\n",1));
+				return (return_message("\nAmbiguous input redirect.\n",1, 1));
 		}
 		if (is_redirector(cp->type) && !program_exit_before(cp->pre))
-			return (return_message("\nInvalide null cmmand.\n", 1));
+			return (return_message("\nInvalide null cmmand.\n", 1, 1));
 		if (cp->type == LESSAND && (!cp->next || cp->next->type != FD))
-			return (return_message("\nMissing file descriptor.\n",1));
+			return (return_message("\nMissing file descriptor.\n",1, 1));
 		if ((is_logic(cp->type) || cp->type == PIPE) &&\
 			(!program_exit_before(cp->pre) || !program_exit_after(cp->next)))
-			return (return_message("\nInvalide null cmmand.\n", 1));
+			return (return_message("\nInvalide null cmmand.\n", 1, 1));
 		cp = cp->next;
 	}
 	return (0);

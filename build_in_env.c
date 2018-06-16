@@ -9,15 +9,24 @@
 /*   Updated: 2018/06/14 15:39:30 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "minishell.h"
+#include<unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "minishell.h"
 
 void	put_strstr(char **str)
 {
 	while(*str)
 		ft_printf("%s\n", *str++);
+}
+
+void	put2_str_fd(char *str1, char *str2, int fd)
+{
+	if (str1 && str2)
+	{
+	write(fd, str1, ft_strlen(str1));
+	write(fd, str2, ft_strlen(str2));
+	}
 }
 
 static int		unset_sub_env(char **paras, char **env, char **new_env)

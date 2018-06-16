@@ -7,6 +7,7 @@
 #include <sys/uio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
 //#include "shell.h"
 #include "minishell.h"
 
@@ -625,12 +626,12 @@ int		open_quote_exit(char *line)
 		else if (line[i] == '\'' && open_dquote < 0)
 			open_squote = -open_squote;
 		else if (line[i] == '\\' && open_dquote < 0 && open_squote < 0 && dslash_before(line, i) && !line[i + 1])
-			return(return_message("\nUnmatched \\ .", 1));
+			return(return_message("\nUnmatched \\ .", 1, 1));
 	}
 	if (open_dquote > 0)
-		return(return_message("\nUnmatched \" .", 1));
+		return(return_message("\nUnmatched \" .", 1, 1));
 	if (open_squote > 0)
-		return(return_message("\nUnmatched \' .", 1));
+		return(return_message("\nUnmatched \' .", 1, 1));
 	return (0);
 }
 
@@ -708,66 +709,40 @@ char	**args_each_exev(t_word *list, char **env)
 	return(res);
 }
 
-void	redi_great(t_word *list)
-{
-	int		fd;
-	int		into_fd;
-
-	if (list->pre && list->pre->type == FD)
-		fd = ft_atoi(list->pre->word);
-	else
-		fd = 1;
-	into_fd = open(list->next->word, O_CREAT | O_TRUNC | O_RDWR, S_IWUSR | S_IRUSR);
-	if (into_fd)
-	{
-		if (dup2(into_fd, fd) < 0)
-			ft_printf("dup2 failed\n");
-		close(into_fd);
-	}
-	else
-		ft_printf("open file failed\n");
-}
-
-void	close_all_pipe(int *pipe_fd, int nb_pipe)
+int		close_all_pipe(int *pipe_fd, int nb_pipe)
 {
 	int		i;
 
 	i = 0;
 	while (i < nb_pipe * 2)
-		close(pipe_fd[i++]);
-}
-
-void	all_case_redirection(t_word *list)
-{
-	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 	{
-		if (list->type == GREAT)
-			redi_great(list);
-		list = list->next;
-	}
+		if (close(pipe_fd[i++] < 0))
+			i = -1;
+			}
+			return (i);
 }
 
-void	do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro)
+int		do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro)
 {
 	if (nb_pipe)
 	{
-		if (nb_pro > 0)
-			close(pipe_fd[nb_pro * 2 - 1]);
+	//	if (nb_pro > 0)
+	//		close(pipe_fd[nb_pro * 2 - 1]);
 		if (nb_pro)
 		{
 			if (dup2(pipe_fd[nb_pro * 2 - 2], 0) < 0)
-				perror("dup2()");
+				return(return_message("dup failed\n", -1, 2));
 		}
 		if (nb_pro < nb_pipe)
 		{
 			if (dup2(pipe_fd[nb_pro * 2 + 1], 1) < 0)
-				perror("dup2()");
+				return(return_message("dup failed\n", -1, 2));
 		}
 	}
-	all_case_redirection(list);
+	return (all_case_redirection(list));
 }
 
-void	init_pid_table(int *table, int len)
+void	init_int_table(int *table, int len)
 {
 	int		i;
 
@@ -776,7 +751,7 @@ void	init_pid_table(int *table, int len)
 		table[i] = -1;
 }
 
-void	do_all_pipe(int *pipe_fd, int nb_pipe)
+int		do_all_pipe(int *pipe_fd, int nb_pipe)
 {
 	int		i;
 
@@ -784,9 +759,13 @@ void	do_all_pipe(int *pipe_fd, int nb_pipe)
 	while (++i <= nb_pipe)
 	{
 		if (pipe(pipe_fd) < 0)
-			perror("pipe()");
+		{
+			perror(" do all pipe pipe()");
+			i = -1;
+			}
 		pipe_fd = pipe_fd + 2;
 	}
+	return (i);
 }
 
 void	pro_is_buildin_no_pipe(t_word *list, char **env, t_sh *table)
@@ -806,14 +785,15 @@ void	actions_each_bloc(t_word *list, char **env, t_sh *table)
 	int			i;
 	int			j;
 	int			nb_pipe;
+	int			status;
 
 	nb_pipe = nb_pipe_eachbloc(list);
 	ft_printf("nb of pipe %d\n", nb_pipe);
 	i = -1;
 	j = 0;
 	ft_bzero(pro, sizeof(pro));
-	init_pid_table(nb_pid, MAX_BUF);
-	init_pid_table(pipe_fd, MAX_BUF);
+	init_int_table(nb_pid, MAX_BUF);
+	init_int_table(pipe_fd, MAX_BUF);
 	do_all_pipe(pipe_fd, nb_pipe);
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
 	{
@@ -825,25 +805,44 @@ void	actions_each_bloc(t_word *list, char **env, t_sh *table)
 			perror("fork()");
 		else if (nb_pid[i] == 0)
 		{
-			do_all_redirection(list, pipe_fd, nb_pipe, i);
+			if (do_all_redirection(list, pipe_fd, nb_pipe, i) == 0)
 			child_pro_bin(pro[i].pro_args, env, table);
-
-			ft_printf("failed\n");
+			else
+				exit(0);
 		}
+		if (i > 0)
+			close(pipe_fd[i * 2 - 2]);
+		if (i < nb_pipe)
+			close(pipe_fd[i * 2 + 1]);
 		ft_printf("inside actions_each_bloc  00000\n");
 		while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 			list = list->next;
-		ft_printf("list here is %s\n", list->word);
 		if (list && list->type == PIPE)
 			list = list->next;
 	}
+	int d;
 	while (j <= i)
 	{
-		close_all_pipe(pipe_fd, nb_pipe);
-		//if (nb_pipe)
-		//	close(pipe_fd[1]);
-		if (waitpid(nb_pid[j++], NULL, 0) < 0)
-			perror("wait()");
+	//	close_all_pipe(pipe_fd, nb_pipe);
+		if (i > 0)
+			close(pipe_fd[i * 2 - 2]);
+		if (i < nb_pipe)
+			close(pipe_fd[i * 2 + 1]);
+		ft_printf(" start wait after close_all_pipe\n");
+		ft_printf(" nb_pid=%d\n", nb_pid[j]);
+		ft_printf("d =%d, j =%d\n", d, j);
+		if (waitpid(nb_pid[j], &status, WUNTRACED) == 1)
+		{
+		ft_printf(" nb_pid=%d is not waited\n", nb_pid[j]);
+			kill(nb_pid[j], SIGQUIT);
+			}
+		 if (WIFSTOPPED(status) | WIFSIGNALED(status))
+		{
+			ft_printf("inside kill\n");
+			kill(nb_pid[j], SIGQUIT);
+		//	ft_printf("inside kill\n");
+			}
+			j++;
 	}
 }
 
@@ -861,7 +860,7 @@ void	actions_blocs(t_word *list, char **env, t_sh *table)
 		if (!remove_quoting_bloc(cp, env))
 		{
 			my_here_doc_word(list);
-	print_words_type(list);
+			print_words_type(list);
 			actions_each_bloc(list, env, table);
 		}
 	}

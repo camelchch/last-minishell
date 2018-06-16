@@ -76,6 +76,7 @@ int		main(int ac, char **av, char **env)
 	//	put_env(env);
 	(void)ac;
 	(void)av;
+	signal(SIGQUIT, signal_inh);
 	cp_env = copy_env(env);
 	update_shlvl(&cp_env);
 	all_path = path(cp_env);

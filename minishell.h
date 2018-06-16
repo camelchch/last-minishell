@@ -101,7 +101,8 @@ int			cd(char **paras, char ***env);
 
 //build_in_env.c
 int			put_env(char **env, char **paras, t_sh *table);
-void		put_strstr(char **str); //main.c
+void		put_strstr(char **str);
+void		put2_str_fd(char *str1, char *str2, int fd);
 
 //child_program.c
 void		child_pro_bin(char **paras, char **env, t_sh *table);
@@ -272,7 +273,6 @@ int				dslash_before(char *line, int index); //line_edition.c
 int				get_line(char *prompt, char *new_line, t_line *line);
 int				prompt(char **env, t_sh *table);
 char			**args_each_exev(t_word *list, char **env);
-void			all_case_redirection(t_word *list);
 
 // sh_table.c
 //char			*ft_getenv(char **env,char *nm);
@@ -312,7 +312,7 @@ t_word			*init_seprator(char *line,int *index);
 t_word			*pipe_or_type(char *line, int *index);
 t_word			*and_type(char *line, int *index);
 t_word			*semidot_type(char *line, int *index);
-int				return_message(char *message, int re_value);
+int				return_message(char *message, int re_value, int fd);
 
 //my_here_doc.c
 void			my_here_doc(char *line);
@@ -320,4 +320,17 @@ int				inclu_heredoc(char *new_line);
 
 // here_doc_bse_word.c
 void			my_here_doc_word(t_word *list);
+
+//all_case_redirection.c
+int				all_case_redirection(t_word *list);
+
+//less_case_redirection.c
+int				redi_less(t_word *list);
+int				redi_lessand(t_word *list);
+int			redi_lessandminus(t_word *list);
+int				err_open_file(t_word *list);
+
+//signal.c
+void		signal_inh(int sign);
+void		signal_quith(int sign);
 #endif

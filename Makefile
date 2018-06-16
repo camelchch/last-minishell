@@ -23,7 +23,8 @@ SRC = line_edition.c rm_quoting_in_list.c rm_quoting_in_word.c print.c\
 		err_in_words.c is_lexing_type.c command_to_words.c init_add_word.c\
 		init_seprator.c for_init_seprator.c here_doc_bse_word.c \
 		child_program.c do_buildin.c build_in_cd.c build_in_env.c \
-		main.c sh_table.c update_env.c set_unset_env.c
+		main.c sh_table.c update_env.c set_unset_env.c all_case_redirection.c\
+		less_case_redirection.c signal.c
 
 LIB_NAME = libft.a
 PRINTF_NAME = libftprintf.a

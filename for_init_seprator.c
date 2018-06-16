@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "minishell.h"
 
 t_word		*pipe_or_type(char *line, int *index)
@@ -46,8 +47,9 @@ t_word		*semidot_type(char *line, int *index)
 	return (add);
 }
 
-int		return_message(char *message, int re_value)
+//if write failed/? 
+int		return_message(char *message, int re_value, int fd)
 {
-	ft_printf("%s", message);
+	write(fd, message, ft_strlen(message));
 	return (re_value);
 }

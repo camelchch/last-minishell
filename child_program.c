@@ -1,11 +1,6 @@
 #include "minishell.h"
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/uio.h>
-#include <unistd.h>
 #include <stdlib.h>
-#include <sys/wait.h>
-#include <signal.h>
 
 static char	*path_in_sh(char *app, t_sh *table)
 {
@@ -31,20 +26,20 @@ void	child_pro_bin(char **paras, char **env, t_sh *table)
 	{
 		update_lastapp(*paras, &env);
 		execve(*paras, paras, env);
-		ft_printf("permission denied for this program: %s\n", *paras);
+		put2_str_fd(*paras, " permission denied for this program.\n", 2);
 		exit(0) ;
 	}
 	path = path_in_sh(*paras, table);
 	if (!path)
 	{
-		ft_printf("%s : there is no such program\n", *paras);
+		put2_str_fd(*paras, " there is no such program.\n", 2);
 		exit(0) ;
 	}
 	else
 	{
 		update_lastapp(path, &env);
 		execve(path, paras, env);
-		ft_printf("permission denied for this program %s\n", *paras);
+		put2_str_fd(*paras, " permission denied for this program.\n", 2);
 		exit(0) ;
 	}
 }

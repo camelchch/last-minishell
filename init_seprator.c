@@ -2,8 +2,9 @@
 
 static void		less_and(char *line, int *index, t_word *add)
 {
-	if (*index + 2 < (int)ft_strlen(line) && line[*index + 2] == '-' && \
-		(*index + 3 >= (int)ft_strlen(line) || is_seprator_w(line, *line + 3 )))
+	if (*index + 2 < (int)ft_strlen(line) && line[*index + 2] == '-')
+	//&& \
+		(*index + 3 >= (int)ft_strlen(line) || is_seprator_w(line, *index + 3 )))
 	{
 		ft_strcpy(add->word, "<&-");
 		add->type = LESSANDMINUS;
@@ -41,8 +42,9 @@ static t_word		*less_type(char *line, int *index)
 
 static void		great_and(char *line, int *index, t_word *add)
 {
-	if (*index + 2 < (int)ft_strlen(line) && line[*index + 2] == '-' && \
-			(*index + 3 >= (int)ft_strlen(line) || is_seprator_w(line, *line + 3 )))
+	if (*index + 2 < (int)ft_strlen(line) && line[*index + 2] == '-' )
+	//&& \
+			(*index + 3 >= (int)ft_strlen(line) || is_seprator_w(line, *index + 3 )))
 	{
 		ft_strcpy(add->word, ">&-");
 		add->type = GREATANDMINUS;
