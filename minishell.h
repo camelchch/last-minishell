@@ -19,6 +19,8 @@ int		open_dquote;
 int		open_squote;
 
 #define MAX_BUF 2048
+#define SETNEW 1
+#define SETOLD 0
 
 typedef struct s_table
 {
@@ -69,51 +71,6 @@ typedef struct	s_word{
 	struct s_word	*pre;
 }				t_word;
 
-char		*get_autoline(t_sh *table);
-void		shell(int ac, char **av, char **env, t_sh *table);
-void		each_cmdline(char *cmdline, char **env, t_sh *table);
-void		pipes(char *cmdline, int nb_pipe, char ***env, t_sh *table);
-int			no_pipe(char *cmdline);
-void		signal_quith(int sign);
-//void		ft_freestrstr(char **cp_env);
-
-//sh_table.c
-char		*ft_getenv(char **env, char *name);
-char		**path(char **env);
-int			calcu_index(char *name);
-void		init_shtable(t_sh *table, char **path);
-
-//update_env.c
-void		update_shlvl(char ***env);
-void		update_lastapp(char *lastcmd, char ***env);
-
-//set_unset_env
-int			nb_str(char **str);
-void		set_env(char **paras, char ***env);
-char		**unset_env(char **paras, char **env);
-
-//do_buildin.c
-int			is_buildin(char *app);
-void		do_build(char **paras, char ***env, t_sh *table);
-
-//build_in_cd.c
-int			cd(char **paras, char ***env);
-
-//build_in_env.c
-int			put_env(char **env, char **paras, t_sh *table);
-void		put_strstr(char **str);
-void		put2_str_fd(char *str1, char *str2, int fd);
-
-//child_program.c
-void		child_pro_bin(char **paras, char **env, t_sh *table);
-void		child_pro_buildin(t_word *list, char **paras, char **env, t_sh *table);
-
-
-
-#include <stdio.h>
-//#ifndef SHELL_SH
-//#define SHELL_SH
-
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
 #define NB_KEY 18
@@ -149,6 +106,8 @@ typedef struct s_history
 	struct s_history *next;
 	struct s_history *pre;;
 }				t_history;
+
+t_history	*history;
 
 typedef struct s_line
 {
@@ -196,10 +155,95 @@ typedef struct s_key
 	int			(*func)(t_line *);
 }				t_key;
 
+void		actions_each_line(char **env, t_word *list, t_sh *table);
+char		*get_autoline(t_sh *table);
+void		shell(int ac, char **av, char **env, t_sh *table);
+void		each_cmdline(char *cmdline, char **env, t_sh *table);
+void		pipes(char *cmdline, int nb_pipe, char ***env, t_sh *table);
+int			no_pipe(char *cmdline);
+void		signal_quith(int sign);
 
-unsigned long	get_key();
-int			printable(t_line *line, size_t key);
-void			put_a_key(t_line *line, unsigned long key);
+//termcap_setting.c
+void		init_attr(int mod);
+int			my_putc(int c);
+
+//line_engine.c
+int			engine(t_line *line, unsigned long key);
+//void		ft_freestrstr(char **cp_env);
+
+//line_mv_left_right.c
+int			move_left(t_line *line);
+int			move_nleft(t_line *line);
+int			mv_left_word(t_line *line);
+int			mv_right_word(t_line *line);
+int			move_right(t_line *line);
+
+//line_delete.c
+int			move_nright(t_line *line);
+int			delete_key(t_line *line);
+int			delete_all(t_line *line);
+
+//line_printable.c
+int			printable(t_line *line, unsigned long key);
+void		put_a_key(t_line *line, unsigned long key);
+
+//line_his_up_down.c
+int			history_up(t_line *line);
+int			history_down(t_line *line);
+
+//line_cp_cut.c
+int			cp_all(t_line *line);
+int			cp_begin(t_line *line);
+int			cp_end(t_line *line);
+int			cut_all(t_line *line);
+int			cut_begin(t_line *line);
+
+//line_paste_go_updown.c
+int			cut_end(t_line *line);
+int			paste(t_line *line);
+int			go_up(t_line *line);
+int			go_down(t_line *line);
+
+//line_get_line.c
+int			get_line(char *prompt, char *new_line, t_line *line);
+
+//prompt.c
+int			prompt(char **env, t_sh *table);
+
+//sh_table.c
+char		*ft_getenv(char **env, char *name);
+char		**path(char **env);
+int			calcu_index(char *name);
+void		init_shtable(t_sh *table, char **path);
+
+//update_env.c
+void		update_shlvl(char ***env);
+void		update_lastapp(char *lastcmd, char ***env);
+
+//set_unset_env
+int			nb_str(char **str);
+void		set_env(char **paras, char ***env);
+char		**unset_env(char **paras, char **env);
+
+//do_buildin.c
+int			is_buildin(char *app);
+void		do_build(char **paras, char ***env, t_sh *table);
+
+//build_in_cd.c
+int			cd(char **paras, char ***env);
+
+//build_in_env.c
+int			put_env(char **env, char **paras, t_sh *table);
+void		put_strstr(char **str);
+void		put2_str_fd(char *str1, char *str2, int fd);
+
+//child_program.c
+void		child_pro_bin(char **paras, char **env, t_sh *table);
+void		child_pro_buildin(t_word *list, char **paras, char **env, t_sh *table);
+
+
+
+
 
 //below is what i need with parsing
 /*
