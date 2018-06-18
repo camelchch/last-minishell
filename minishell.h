@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/14 17:13:13 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/18 13:32:44 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,13 +237,6 @@ int			put_env(char **env, char **paras, t_sh *table);
 void		put_strstr(char **str);
 void		put2_str_fd(char *str1, char *str2, int fd);
 
-//child_program.c
-void		child_pro_bin(char **paras, char **env, t_sh *table);
-void		child_pro_buildin(t_word *list, char **paras, char **env, t_sh *table);
-
-
-
-
 
 //below is what i need with parsing
 /*
@@ -312,11 +305,6 @@ typedef struct s_program {
 
 
 //execve(ls) out > execve(less) > open(file)
-//line_edition.c
-int				dslash_before(char *line, int index); //line_edition.c
-int				get_line(char *prompt, char *new_line, t_line *line);
-int				prompt(char **env, t_sh *table);
-char			**args_each_exev(t_word *list, char **env);
 
 // sh_table.c
 //char			*ft_getenv(char **env,char *nm);
@@ -373,6 +361,28 @@ int				redi_less(t_word *list);
 int				redi_lessand(t_word *list);
 int			redi_lessandminus(t_word *list);
 int				err_open_file(t_word *list);
+
+//child_program.c
+void		child_pro_bin(char **paras, char **env, t_sh *table);
+void		child_pro_buildin(t_word *list, char **paras, char **env, t_sh *table);
+
+//actions_each_line.c
+int			dslash_before(char *line, int index);
+void		print_list_word(t_word *list);
+
+//actions_each_bloc.c
+int			actions_each_bloc(t_word *list, char **env, t_sh *table);
+
+//helper_actiond_each_bloc.c
+int			nb_pipe_eachbloc(t_word *list);
+char		**args_each_exev(t_word *list, char **env);
+int			close_all_pipe(int *pipe_fd, int nb_pipe); // didnt really used this func.
+int			do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro);
+
+//helper_actiond_each_bloc_2.c
+void		init_int_table(int *table, int len);
+int			do_all_pipe(int *pipe_fd, int nb_pipe);
+int			pro_is_buildin_no_pipe(t_word *list, char **env, t_sh *table);
 
 //signal.c
 void		signal_inh(int sign);

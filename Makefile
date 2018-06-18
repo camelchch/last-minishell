@@ -6,7 +6,7 @@
 #    By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/06 21:06:58 by fsabatie          #+#    #+#              #
-#    Updated: 2018/06/14 16:14:31 by saxiao           ###   ########.fr        #
+#    Updated: 2018/06/18 12:54:13 by saxiao           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ NAME = minishell
 #SRC_PATH = srcs
 #INC_PATH = includes
 
-SRC = line_edition.c rm_quoting_in_list.c rm_quoting_in_word.c print.c\
+SRC = 	rm_quoting_in_list.c rm_quoting_in_word.c print.c\
 		err_in_words.c is_lexing_type.c command_to_words.c init_add_word.c\
 		init_seprator.c for_init_seprator.c here_doc_bse_word.c \
 		child_program.c do_buildin.c build_in_cd.c build_in_env.c \
@@ -27,7 +27,8 @@ SRC = line_edition.c rm_quoting_in_list.c rm_quoting_in_word.c print.c\
 		less_case_redirection.c signal.c\
 		termcap_setting.c line_engine.c line_mv_left_right.c line_delete.c\
 		line_printable.c line_his_up_down.c line_cp_cut.c line_paste_go_updown.c\
-		line_get_line.c prompt.c
+		line_get_line.c prompt.c actions_each_line.c actions_each_bloc.c \
+		helper_actions_each_bloc.c helper_actions_each_bloc_2.c
 
 LIB_NAME = libft.a
 PRINTF_NAME = libftprintf.a
