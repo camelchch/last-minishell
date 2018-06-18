@@ -39,7 +39,7 @@ static void				for_init_line(t_line *line)
 	line->engine = engine;
 }
 
-static void			init_line(char	*prompt, t_line *line)
+void			init_line(char	*prompt, t_line *line)
 {
 	ft_bzero(line->buf, MAX_BUF);
 	ft_bzero(line->ici_doc, MAX_BUF);
@@ -86,6 +86,7 @@ int					get_line(char *prompt, char *new_line, t_line *line)
 {
 	unsigned long	key;
 
+	init_attr(SETOLD);
 	ft_printf("%s", prompt);
 	init_attr(SETNEW);
 	init_line(prompt,line);

@@ -49,7 +49,7 @@ static void	for_cd(char *paras, char ***env, char **tempwd, char *path)
 	else
 	{
 		if (access(paras, F_OK))
-			ft_printf("no such file or directory: %s\n", *paras);
+			ft_printf("no such file or directory: %s\n", paras);
 		else if (access(paras, X_OK))
 			ft_printf("permission denied\n");
 	}

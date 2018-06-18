@@ -39,10 +39,10 @@ static int		not_empty(char *new_line)
 
 int			prompt(char **env, t_sh *table)
 {
-	char				new_line[MAX_BUF];
+//	char				new_line[MAX_BUF];
 	t_history			*add;
 	int					quit;
-	t_line				line;
+//	t_line				line;
 	t_word				*list;
 
 	quit = 0;
@@ -50,11 +50,13 @@ int			prompt(char **env, t_sh *table)
 	ft_strcpy(temp_file, "./42sh_tmp.c");
 	while (!quit)
 	{
+		line_edition_ing = 1;
 		add = malloc(sizeof(t_history));
 		ft_bzero(new_line, MAX_BUF);
-		get_line("$> ",new_line, &line);
+		get_line("$> ",new_line, &a_line);
 		if (not_empty(new_line))
 		{
+			line_edition_ing = 0;
 			init_add(add, new_line);
 			add_history(&history, add);
 			list = command_to_words(new_line);
@@ -67,4 +69,3 @@ int			prompt(char **env, t_sh *table)
 	}
 	return (0);
 }
-
