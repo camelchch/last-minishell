@@ -53,3 +53,11 @@ void	child_pro_buildin(t_word *list, char **paras, char **env, t_sh *table)
 	do_build(paras, &env, table);
 	exit(0);
 }
+
+void	do_child_pro(t_word *list, char **paras, char **env, t_sh *table)
+{
+	if (is_buildin(list->word))
+		child_pro_buildin(list, paras, env, table);
+	else
+		child_pro_bin(paras, env, table);
+}

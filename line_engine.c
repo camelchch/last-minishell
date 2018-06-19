@@ -25,7 +25,7 @@ t_key	t[NB_KEY] = {
 
 static void	init_for_enginie_2(t_key *t, t_line *line)
 {
-	t[12].a_key = CONTRL_AT;
+	t[12].a_key = CONTRL_S;
 	t[12].func = line->cut_all;
 	t[13].a_key = CONTRL_HASH;
 	t[13].func = line->cut_begin;
@@ -37,6 +37,8 @@ static void	init_for_enginie_2(t_key *t, t_line *line)
 	t[16].func = line->go_up;
 	t[17].a_key = CONTRL_N;
 	t[17].func = line->go_down;
+	t[18].a_key = EOF;
+	t[18].func = line->cut_all;
 }
 
 static void	init_for_engine(t_key *t, t_line *line)

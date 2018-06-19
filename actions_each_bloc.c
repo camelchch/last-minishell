@@ -67,7 +67,7 @@ int		actions_each_bloc(t_word *list, char **env, t_sh *table)
 		else if (nb_pid[i] == 0)
 		{
 			if (do_all_redirection(list, pipe_fd, nb_pipe, i) == 0)
-				child_pro_bin(pro[i].pro_args, env, table);
+				do_child_pro(list, pro[i].pro_args, env, table);
 			else
 				exit(0);
 		}

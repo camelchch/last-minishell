@@ -15,7 +15,7 @@ static void	raw_termi_mode()
 	struct	termios	tattr;
 
 	tcgetattr(STDIN_FILENO, &tattr);
-	tattr.c_lflag &= ~(ECHO | ICANON);
+	tattr.c_lflag &= ~(ECHO | ICANON | ISIG);
 	tattr.c_oflag &= ~(OPOST);
 	tattr.c_cc[VMIN] = 1;
 	tattr.c_cc[VTIME] = 0;

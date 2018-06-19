@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/18 17:16:20 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/19 12:38:16 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ typedef struct	s_word{
 
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
-#define NB_KEY 18
+#define NB_KEY 19
 #define	ARROW_LEFT 4479771
 #define ARROW_RIGHT 4414235
 #define	ARROW_UP 4283163
@@ -91,7 +91,7 @@ typedef struct	s_word{
 #define CONTRL_P 16
 #define CONTRL_HASH 27
 #define CONTRL_PERCENT 29
-#define CONTRL_AT 0
+#define CONTRL_S 19
 #define MY_PAGE_UP 45067098907
 #define MY_PAGE_DOWN 45067164443
 #define OPTION_SHIFT_U 43202
@@ -370,6 +370,7 @@ int				err_open_file(t_word *list);
 //child_program.c
 void		child_pro_bin(char **paras, char **env, t_sh *table);
 void		child_pro_buildin(t_word *list, char **paras, char **env, t_sh *table);
+void		do_child_pro(t_word *list, char **paras, char **env, t_sh *table);
 
 //actions_each_line.c
 int			dslash_before(char *line, int index);
