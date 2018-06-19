@@ -18,7 +18,7 @@ static t_word	*close_fd_mv_list(t_word *list, int i, int *pipe_fd, int nb_pipe)
 		list = list->next;
 	if (list && list->type == PIPE)
 		list = list->next;
-	ft_printf("list now =%s\n", list->word);
+//	ft_printf("list now =%s\n", list->word);
 	return (list);
 }
 

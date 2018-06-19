@@ -36,6 +36,8 @@ static void				for_init_line(t_line *line)
 	line->paste = paste;
 	line->go_up = go_up;
 	line->go_down = go_down;
+	line->ctrl_d = ctrl_d;
+	line->delete_at_position = delete_at_position;
 	line->engine = engine;
 }
 

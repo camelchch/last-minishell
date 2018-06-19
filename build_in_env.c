@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:19:33 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/19 13:11:15 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/19 19:41:07 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include<unistd.h>
@@ -49,7 +49,6 @@ static int		unset_sub_env(char **paras, char **env, char **new_env)
 	return (0);
 	}
 	put2_str_fd(*paras, " :no such variable \n", 2);
-	ft_printf("no such variable %s\n", *paras);
 	return (1);
 }
 
@@ -68,7 +67,11 @@ static void		pro_for_env(char **paras, char **new_env, t_sh *table)
 			exit(0);
 		}
 		else
+		{
+		//	if (ft_strcmp(*paras, "./minishell"))
+		//		init_attr(SETNEW);
 			child_pro_bin(paras, new_env, table);
+		}
 	}
 	else
 		waitpid(0, NULL, 0);

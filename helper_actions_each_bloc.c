@@ -47,20 +47,24 @@ char	**args_each_exev(t_word *list, char **env)
 	return(res);
 }
 
-int		close_all_pipe(int *pipe_fd, int nb_pipe)
+int		close_all_pipe(int *pipe_fd, int nb_pipe, int nb_pro)
 {
 	int		i;
 
 	i = 0;
 	while (i < nb_pipe * 2)
 	{
-		if (close(pipe_fd[i++] < 0))
+		if ((nb_pro && i != nb_pro *2 -2 ) || (nb_pro < nb_pipe && i != nb_pro *2 + 1))
 		{
-			i = -1;
-			ft_printf("close failed in close_all_pipe\n");
+			if (close(pipe_fd[i] < 0))
+			{
+				ft_printf("close failed in close_all_pipe i=%d nb_pro=%d\n", i, nb_pro);
+				perror("close failed");
+			}
 		}
+		i++;
 	}
-	return (i);
+	return (0);
 }
 
 int		do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro)
@@ -76,6 +80,15 @@ int		do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro)
 		{
 			if (dup2(pipe_fd[nb_pro * 2 + 1], 1) < 0)
 				return(return_message("dup failed\n", -1, 2));
+		}
+		if (!nb_pro)
+			close(pipe_fd[0]);
+		else if (nb_pro == nb_pipe)
+			close(pipe_fd[nb_pipe * 2 - 1]);
+		else
+		{
+			close(pipe_fd[nb_pro * 2 - 1]);
+			close(pipe_fd[nb_pro * 2]);
 		}
 	}
 	return (all_case_redirection(list));

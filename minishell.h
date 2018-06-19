@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/19 12:38:16 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/19 18:28:08 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ typedef struct	s_word{
 
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
-#define NB_KEY 19
+#define NB_KEY 20
 #define	ARROW_LEFT 4479771
 #define ARROW_RIGHT 4414235
 #define	ARROW_UP 4283163
@@ -98,6 +98,8 @@ typedef struct	s_word{
 #define OPTION_SHIFT_D 36547
 #define CONTRL_N 14
 #define CONTRL_F 6
+#define CONTRL_D 4
+#define DELETE_AT_POSITION 2117294875
 
 char	temp_file[MAX_BUF];
 
@@ -147,6 +149,8 @@ typedef struct s_line
 	int			(*paste)(struct s_line *line);
 	int			(*go_up)(struct s_line *line);
 	int			(*go_down)(struct s_line *line);
+	int			(*ctrl_d)(struct s_line *line);
+	int			(*delete_at_position)(struct s_line *line);
 	int			(*engine)(struct s_line *line, unsigned long a_key);
 }				t_line;
 
@@ -186,6 +190,10 @@ int			move_right(t_line *line);
 int			move_nright(t_line *line);
 int			delete_key(t_line *line);
 int			delete_all(t_line *line);
+
+//line_ctrl_d.c
+int			delete_at_position(t_line *line);
+int			ctrl_d(t_line *line);
 
 //line_printable.c
 int			printable(t_line *line, unsigned long key);
@@ -382,7 +390,7 @@ int			actions_each_bloc(t_word *list, char **env, t_sh *table);
 //helper_actiond_each_bloc.c
 int			nb_pipe_eachbloc(t_word *list);
 char		**args_each_exev(t_word *list, char **env);
-int			close_all_pipe(int *pipe_fd, int nb_pipe); // didnt really used this func.
+int			close_all_pipe(int *pipe_fd, int nb_pipe, int nb_pro); // didnt really used this func.
 int			do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro);
 
 //helper_actiond_each_bloc_2.c

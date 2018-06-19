@@ -37,8 +37,10 @@ static void	init_for_enginie_2(t_key *t, t_line *line)
 	t[16].func = line->go_up;
 	t[17].a_key = CONTRL_N;
 	t[17].func = line->go_down;
-	t[18].a_key = EOF;
-	t[18].func = line->cut_all;
+	t[18].a_key = DELETE_AT_POSITION;
+	t[18].func = line->delete_at_position;
+	t[19].a_key = CONTRL_D;
+	t[19].func = line->ctrl_d;
 }
 
 static void	init_for_engine(t_key *t, t_line *line)
