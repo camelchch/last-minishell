@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:19:33 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/19 19:41:07 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/20 14:51:29 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include<unistd.h>
@@ -90,10 +90,7 @@ static int	env_iu(char **paras, char **new_env, char ***env, t_sh *table)
 				new_env[i++] = *paras++;
 		new_env[i] = NULL;
 		cp = new_env;
-		if (!*paras)
-			put_strstr(cp);
-		else
-			pro_for_env(paras, cp, table);
+		(!*paras) ? put_strstr(cp) : pro_for_env(paras, cp, table);
 	}
 	else if ((*paras)[1] == 'u')
 	{

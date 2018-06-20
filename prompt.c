@@ -39,10 +39,8 @@ static int		not_empty(char *new_line)
 
 int			prompt(char **env, t_sh *table)
 {
-//	char				new_line[MAX_BUF];
 	t_history			*add;
 	int					quit;
-//	t_line				line;
 	t_word				*list;
 
 	quit = 0;
@@ -62,10 +60,8 @@ int			prompt(char **env, t_sh *table)
 			list = command_to_words(new_line);
 			actions_each_line(env, list, table);
 		}
-		ft_printf("\n");
 		if (!ft_strcmp(new_line, "exit"))
 			quit = 1;
-		//	ft_printf("new line =%s\n", new_line);
 	}
 	return (0);
 }

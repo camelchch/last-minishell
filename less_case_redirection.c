@@ -25,9 +25,7 @@ int		redi_less(t_word *list)
 		fd = ft_atoi(list->pre->word);
 	else
 		fd = 0;
-		ft_printf("file is %s\n", list->next->word);
 	//if (access(list->next->word, F_OK))
-		
 	into_fd = open(list->next->word, O_RDONLY);
 	if (into_fd != -1)
 	{

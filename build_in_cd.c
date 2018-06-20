@@ -27,13 +27,13 @@ static void		oldpwd_home(char **cp, char ***env, int ct)
 	{
 		*cp = ft_getenv(*env, "HOME");
 		if (!*cp)
-			ft_printf("enviroment HOME is not set\n");
+			ft_putendl_fd("enviroment HOME is not set", 2);
 	}
 	else
 	{
 		*cp = ft_getenv(*env, "OLDPWD");
 		if (!*cp)
-			ft_printf("enviroment OLDPWD  is not set\n");
+			ft_putendl_fd("enviroment OLDPWD  is not set", 2);
 	}
 }
 
@@ -49,9 +49,9 @@ static void	for_cd(char *paras, char ***env, char **tempwd, char *path)
 	else
 	{
 		if (access(paras, F_OK))
-			ft_printf("no such file or directory: %s\n", paras);
+			put2_str_fd(paras, " :no such file or directory\n", 2);
 		else if (access(paras, X_OK))
-			ft_printf("permission denied\n");
+			ft_putendl_fd("permission denied", 2);
 	}
 }
 
@@ -68,10 +68,7 @@ int		cd(char **paras, char ***env)
 	else
 		cp = paras[1];
 	if (ct != 1 && ct != 2)
-	{
-		ft_printf("Too many arguments--usage : cd path\n");
-		return (1);
-	}
+		return(return_message("Too many arguments--usage : cd path\n", 1, 2));
 	else
 	{
 		init_tempwd(tempwd, ct, &paras, path);

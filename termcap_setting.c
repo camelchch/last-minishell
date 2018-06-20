@@ -10,7 +10,7 @@
 #include <signal.h>
 #include "minishell.h"
 
-static void	raw_termi_mode()
+static int	raw_termi_mode()
 {
 	struct	termios	tattr;
 
@@ -20,7 +20,9 @@ static void	raw_termi_mode()
 	tattr.c_cc[VMIN] = 1;
 	tattr.c_cc[VTIME] = 0;
 	tcsetattr(STDIN_FILENO, TCSADRAIN,&tattr);
-	tgetent(NULL, getenv("TERM"));
+	if (tgetent(NULL, getenv("TERM")) != 1)
+			return (-1);
+	return (0);
 }
 
 static void	default_termi_mode()
@@ -33,7 +35,7 @@ static void	default_termi_mode()
 	tcsetattr(STDIN_FILENO, TCSADRAIN,&tattr);
 }
 
-void		init_attr(int mod)
+int		init_attr(int mod)
 {
 	static struct	termios old;
 	static int				oldatt = 0;
@@ -43,7 +45,7 @@ void		init_attr(int mod)
 	{
 		oldatt = 1;
 		if (tcgetattr(0, &old) == -1)
-			ft_printf("can't get att\n");
+			return(return_message("can't get att", -1, 2));
 	}
 	if (mod == SETNEW)
 	{
@@ -55,11 +57,16 @@ void		init_attr(int mod)
 		new.c_cc[VTIME] = 0;
 		//		new.c_cc[VTNTR] = 1;
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &new);
-		tgetent(NULL, getenv("TERM"));
+	if (tgetent(NULL, getenv("TERM")) != 1)
+	{
+		default_termi_mode();
+			return (-1);
+	}
 	}
 	else
 		//tcsetattr(STDIN_FILENO, TCSADRAIN, &old);
 		default_termi_mode();
+	return (0);
 }
 
 

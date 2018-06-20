@@ -71,7 +71,6 @@ void	my_here_doc(char *line)
 		ft_printf("close temp file failed\n");
 	line_after_heredoc(line, i, temp_file);
 }
-static void	for_here_doc(char *line, int *i, int *temp_fd, t_line *doc_line)
 
 
 

@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/19 18:28:08 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/20 15:45:37 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,21 +46,21 @@ typedef struct s_vari
 
 typedef enum s_type {
 	PROGRAM = 10,
-	ARG, //11
-	LESS,//< 12
+	ARG, //
+	LESS,//< 
 	LESSAND,// <&
 	LESSANDMINUS,// <&-
-	DLESS, //<< 13
-	AND, //&& 14
-	GREAT, //> 15
-	GREATAND, // >& 15
-	GREATANDMINUS, // >&- 15
-	DGREAT, //>> 16
-	OR,//|| 17
-	PIPE, //| 18
-	SEMI_DOT, // 19;
-	FILES, //20
-	FD, //21
+	DLESS, //<<
+	AND, //&&
+	GREAT, //>
+	GREATAND, // >&
+	GREATANDMINUS, // >&-
+	DGREAT, //>>
+	OR,//||
+	PIPE, //|
+	SEMI_DOT, // ;
+	FILES, //
+	FD, //
 	HERE_DOC_MARK,
 	BUIDIN,
 }			t_type;
@@ -71,6 +71,12 @@ typedef struct	s_word{
 	struct s_word	*next;
 	struct s_word	*pre;
 }				t_word;
+
+typedef struct s_save_fd{
+	int		fd_2be_saved;
+	int		fd_saved_in2;
+	struct s_save_fd *next;
+}				t_save_fd;
 
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
@@ -172,7 +178,7 @@ int			no_pipe(char *cmdline);
 void		signal_quith(int sign);
 
 //termcap_setting.c
-void		init_attr(int mod);
+int		init_attr(int mod);
 int			my_putc(int c);
 
 //line_engine.c
@@ -397,6 +403,11 @@ int			do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro);
 void		init_int_table(int *table, int len);
 int			do_all_pipe(int *pipe_fd, int nb_pipe);
 int			pro_is_buildin_no_pipe(t_word *list, char **env, t_sh *table);
+
+//recover_fd__buildin.c
+t_save_fd	*fd_restorage(t_word *list, t_save_fd *recover);
+void		recover_fd(t_save_fd *recover);
+void		free_saver_fd(t_save_fd *recover);
 
 //signal.c
 void		signal_inh(int sign);

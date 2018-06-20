@@ -94,7 +94,7 @@ t_word		*init_seprator(char *line, int *index)
 		return (semidot_type(line, index));
 	else if (line[*index] == ';')
 		return (semidot_type(line, index));
-	else if (line[*index] == ' ')
+	else if (line[*index] == ' ' || line[*index] == '\t')
 		*index = *index + 1;
 	return (NULL);
 }

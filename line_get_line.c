@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <curses.h>
 #include <term.h>
 #include <sys/types.h>
@@ -87,10 +88,13 @@ static int			open_quote_exit(char *line)
 int					get_line(char *prompt, char *new_line, t_line *line)
 {
 	unsigned long	key;
+	char			*ligne;
 
 	init_attr(SETOLD);
+	ligne = NULL;
 	ft_printf("%s", prompt);
-	init_attr(SETNEW);
+	if (init_attr(SETNEW) == 0)
+	{
 	init_line(prompt,line);
 	while (((key = (int)get_key()) && key != '\n'))
 	{
@@ -102,5 +106,14 @@ int					get_line(char *prompt, char *new_line, t_line *line)
 	if (open_quote_exit((char *)line->buf))
 		ft_bzero(line->buf, MAX_BUF);
 	ft_strcpy(new_line, (const char *)line->buf);
+	}
+	else
+	{
+		get_next_line(1, &ligne);
+	if (!open_quote_exit(ligne))
+	ft_strcpy(new_line, (const char *)ligne);
+	if (ligne)
+		free(ligne);
+	}
 	return (0);
 }
