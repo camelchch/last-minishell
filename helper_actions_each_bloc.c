@@ -57,10 +57,7 @@ int		close_all_pipe(int *pipe_fd, int nb_pipe, int nb_pro)
 		if ((nb_pro && i != nb_pro *2 -2 ) || (nb_pro < nb_pipe && i != nb_pro *2 + 1))
 		{
 			if (close(pipe_fd[i] < 0))
-			{
-				ft_printf("close failed in close_all_pipe i=%d nb_pro=%d\n", i, nb_pro);
-				perror("close failed");
-			}
+				ft_putendl_fd("close failed", 2);
 		}
 		i++;
 	}

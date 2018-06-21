@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/21 13:48:26 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/21 16:28:44 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,9 @@
 int		open_dquote;
 int		open_squote;
 int		line_edition_ing;
+int		end_line;
 
-#define MAX_BUF 2048
+#define MAX_BUF 4096
 #define SETNEW 1
 #define SETOLD 0
 
@@ -415,4 +416,7 @@ void		signal_quith(int sign);
 
 //my_free.c
 void		ft_freestrstr(char **cp_env);
+void		free_sh_table(t_sh *table, int index);
+void		free_pro_args(t_program *pro, int index);
+void		free_word_list(t_word *list);
 #endif

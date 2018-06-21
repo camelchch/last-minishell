@@ -44,7 +44,6 @@ int			prompt(char **env, t_sh *table)
 	t_word				*list;
 
 	quit = 0;
-	(void)table;
 	ft_strcpy(temp_file, "./42sh_tmp.c");
 	while (!quit)
 	{
@@ -52,6 +51,7 @@ int			prompt(char **env, t_sh *table)
 		add = malloc(sizeof(t_history));
 		ft_bzero(new_line, MAX_BUF);
 		get_line("$> ",new_line, &a_line);
+			ft_printf("\n");
 		if (not_empty(new_line))
 		{
 			line_edition_ing = 0;
@@ -59,6 +59,7 @@ int			prompt(char **env, t_sh *table)
 			add_history(&history, add);
 			list = command_to_words(new_line);
 			actions_each_line(env, list, table);
+			free_word_list(list);
 		}
 		if (!ft_strcmp(new_line, "exit"))
 			quit = 1;

@@ -36,17 +36,12 @@ static void	actions_blocs(t_word *list, char **env, t_sh *table)
 	find_bloc = 0;
 	find_err = 0;
 	cp = list;
-	//while (cp && !is_logic(cp->type) && cp->type != SEMI_DOT)
 	while (cp)
 	{
 	while (cp && !is_logic(cp->type) && cp->type != SEMI_DOT)
 	{
 		if (!remove_quoting_bloc(cp, env))
-		{
-//			my_here_doc_word(cp);
-//			print_words_type(cp);
 			actions_each_bloc(cp, env, table);
-		}
 	while (cp && !is_logic(cp->type) && cp->type != SEMI_DOT)
 			cp = cp->next;
 	if (cp && cp->type != SEMI_DOT)
@@ -59,11 +54,6 @@ static void	actions_blocs(t_word *list, char **env, t_sh *table)
 
 void		actions_each_line(char **env, t_word *list, t_sh *table)
 {
-	ft_printf("\n");
-	//print_words_type(list);
-	//print_list_word(list);
 	if (!err_in_words(list))
-	{
 		actions_blocs(list, env, table);
-	}
 }

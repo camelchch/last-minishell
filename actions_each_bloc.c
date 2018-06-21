@@ -31,9 +31,13 @@ static void	wait_all_pid(int *nb_pid, int i)
 		waitpid(nb_pid[j], &status, WUNTRACED);
 }
 
-static void	init_for_each_bloc(t_program *pro, int *nb_pid, int *pipe_fd)
+static void	init_for_each_bloc(t_program *pro, int index,  int *nb_pid, int *pipe_fd)
 {
-	ft_bzero(pro, sizeof(pro));
+	int		i;
+
+	i = -1;
+	while (++i < index)
+		pro[i].pro_args = NULL;
 	init_int_table(nb_pid, MAX_BUF);
 	init_int_table(pipe_fd, MAX_BUF);
 }
@@ -55,7 +59,7 @@ int		actions_each_bloc(t_word *list, char **env, t_sh *table)
 	init_for_each_bloc_2(list, &nb_pipe, &i);
 	if (!nb_pipe && list->type == BUIDIN)
 		return (pro_is_buildin_no_pipe(list, env, table));
-	init_for_each_bloc(pro, nb_pid, pipe_fd);
+	init_for_each_bloc(pro, MAX_BUF,  nb_pid, pipe_fd);
 	do_all_pipe(pipe_fd, nb_pipe);
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
 	{
@@ -69,6 +73,7 @@ int		actions_each_bloc(t_word *list, char **env, t_sh *table)
 				do_child_pro(list, pro[i].pro_args, env, table);
 		list = close_fd_mv_list(list, i , pipe_fd, nb_pipe);
 	}
+	free_pro_args(pro, MAX_BUF);
 	wait_all_pid(nb_pid, i);
 	return (0);
 }

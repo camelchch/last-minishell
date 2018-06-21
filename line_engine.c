@@ -77,17 +77,23 @@ int		engine(t_line *line, unsigned long  key)
 	int		i;
 	t_key	t[NB_KEY];
 
-	i = 0;
+	i = -1;
 	if ((32 <= key && key <= 126))
+	{
+		if (line->buf_len == MAX_BUF - 1)
+		{
+			end_line = 1;
+			return (0);
+		}
 		line->printable(line, key);
+	}
 	else
 	{
 		init_for_engine(t, line);
-		while (i < NB_KEY)
+		while (++i < NB_KEY)
 		{
 			if (key == (t[i].a_key))
 				t[i].func(line);
-			i++;
 		}
 	}
 	return (0);

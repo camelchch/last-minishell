@@ -70,6 +70,7 @@ void	set_env(char **paras, char ***env)
 		cp++;
 	if (*cp)
 	{
+		free(*cp);
 		*cp = ft_strjoin(*paras++, "=");
 		temp = *cp;
 		*cp = ft_strjoin(*cp, *paras);

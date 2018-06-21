@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <unistd.h>
 #include "minishell.h"
 
@@ -33,11 +34,14 @@ int		pro_is_buildin_no_pipe(t_word *list, char **env, t_sh *table)
 	t_save_fd	*recover;
 
 	recover = NULL;
+	pro_args = NULL;
 	recover = fd_restorage(list, recover);
 	pro_args = args_each_exev(list, env);
 	all_case_redirection(list);
 	do_build(pro_args, &env, table);
 	recover_fd(recover);
 	free_saver_fd(recover);
+	if (pro_args)
+		free(pro_args);
 	return (0);
 }

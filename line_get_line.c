@@ -90,18 +90,14 @@ int					get_line(char *prompt, char *new_line, t_line *line)
 	unsigned long	key;
 	char			*ligne;
 
-	init_attr(SETOLD);
 	ligne = NULL;
+	end_line = 0;
 	ft_printf("%s", prompt);
 	if (init_attr(SETNEW) == 0)
 	{
 	init_line(prompt,line);
-	while (((key = (int)get_key()) && key != '\n'))
-	{
-		if (key == '\n')
-			break;
+	while (((key = (int)get_key()) && key != '\n') && !end_line)
 		line->engine(line, key);
-	}
 	init_attr(SETOLD);
 	if (open_quote_exit((char *)line->buf))
 		ft_bzero(line->buf, MAX_BUF);
@@ -112,8 +108,7 @@ int					get_line(char *prompt, char *new_line, t_line *line)
 		get_next_line(1, &ligne);
 	if (!open_quote_exit(ligne))
 	ft_strcpy(new_line, (const char *)ligne);
-	if (ligne)
-		free(ligne);
+	ligne ? free(ligne) : (void)ligne;
 	}
 	return (0);
 }

@@ -93,6 +93,7 @@ int		all_case_redirection(t_word *list)
 {
 	int		res;
 
+	res = 0;
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 	{
 		if (list->type == GREAT)
