@@ -18,24 +18,23 @@ static void	add_env(char ***env, char **paras)
 	int		ct;
 	int		i;
 	char	*temp;
+	char	**for_free;
 
 	i = 0;
 	ct = nb_str(*env) + 2;
 
 	cp = *env;
+	for_free = *env;
 	*env = malloc(sizeof(char *) * ct);
 	while (i < ct - 2)
-	{
-	//	temp = *cp;
 		(*env)[i++] = ft_strdup(*cp++);
-//		free(temp);
-	}
 	(*env)[i] = ft_strjoin(*paras, "=");
 	paras++;
 	temp = (*env)[i];
 	(*env)[i] = ft_strjoin((*env)[i], *paras);
 	free(temp);
 	(*env)[++i] = NULL;
+	ft_freestrstr(for_free);
 //	free(cp);
 }
 
@@ -47,6 +46,7 @@ static char	**delet_env(char **env, int index)
 
 	//put_env(*env);
 	temp = env;
+	free(temp[index]);
 	while (index < nb_str(env) - 1)
 	{
 	//	temp = *cp;

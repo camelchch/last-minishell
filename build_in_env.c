@@ -123,10 +123,10 @@ int		put_env(char **env, char **paras, t_sh *table)
 	if (!*paras)
 		put_strstr(env);
 	else if (*paras && **paras == '-')
-	{
 		res = env_iu(paras, new_env, &env , table);
-		free(new_env);
-	}
+	else
+		pro_for_env(paras, env, table);
+	free(new_env);
 	return (res);
 	//else
 	//	pipes(*paras, no_pipe(*paras), &env, table);

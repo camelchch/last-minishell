@@ -23,7 +23,7 @@ static void	init_tempwd(char **tempwd, int ct, char ***paras, char *path)
 static void		oldpwd_home(char **cp, char ***env, int ct)
 {
 	(void)ct;
-	if (ct == 1 || ft_strcmp(*cp, "~"))
+	if (ct == 1 || !ft_strcmp(*cp, "~"))
 	{
 		*cp = ft_getenv(*env, "HOME");
 		if (!*cp)
@@ -74,7 +74,8 @@ int		cd(char **paras, char ***env)
 		init_tempwd(tempwd, ct, &paras, path);
 		if (ct == 1 || (ct == 2 && (!ft_strcmp(*(paras + 1), "~") || !ft_strcmp(*(paras + 1), "-"))))
 			oldpwd_home(&cp, env, ct);
-		for_cd(cp, env, tempwd, path);
+		if (cp)
+			for_cd(cp, env, tempwd, path);
 		return (0);
 	}
 }
