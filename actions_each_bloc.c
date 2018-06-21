@@ -18,7 +18,6 @@ static t_word	*close_fd_mv_list(t_word *list, int i, int *pipe_fd, int nb_pipe)
 		list = list->next;
 	if (list && list->type == PIPE)
 		list = list->next;
-//	ft_printf("list now =%s\n", list->word);
 	return (list);
 }
 
@@ -60,17 +59,14 @@ int		actions_each_bloc(t_word *list, char **env, t_sh *table)
 	do_all_pipe(pipe_fd, nb_pipe);
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
 	{
+		my_here_doc_word(list);
 		pro[++i].pro_args = args_each_exev(list, env);
 		nb_pid[i] = fork();
 		if (nb_pid[i] < 0)
-			perror("fork()");
+			ft_putendl_fd("fork failed", 2);
 		else if (nb_pid[i] == 0)
-		{
-			if (do_all_redirection(list, pipe_fd, nb_pipe, i) == 0)
+			(do_all_redirection(list, pipe_fd, nb_pipe, i)) ? exit(0) :\
 				do_child_pro(list, pro[i].pro_args, env, table);
-			else
-				exit(0);
-		}
 		list = close_fd_mv_list(list, i , pipe_fd, nb_pipe);
 	}
 	wait_all_pid(nb_pid, i);

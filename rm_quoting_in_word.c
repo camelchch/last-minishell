@@ -58,7 +58,7 @@ int		remove_quoting_word(char *word, char **env)
 			dollor_sign(&help, cp, vari);
 			vari_value = ft_getenv(env, vari);
 			if (!vari_value)
-				return(return_message("\nUndefined variable.", 1, 1));
+				return(return_message("\nUndefined variable.", 1, 2));
 			change_part_str(cp, help.i, help.j - 1, vari_value);
 		}
 		if (cp[help.i] == '"')

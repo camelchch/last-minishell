@@ -43,7 +43,7 @@ static void	actions_blocs(t_word *list, char **env, t_sh *table)
 	{
 		if (!remove_quoting_bloc(cp, env))
 		{
-			my_here_doc_word(cp);
+//			my_here_doc_word(cp);
 //			print_words_type(cp);
 			actions_each_bloc(cp, env, table);
 		}
@@ -60,8 +60,8 @@ static void	actions_blocs(t_word *list, char **env, t_sh *table)
 void		actions_each_line(char **env, t_word *list, t_sh *table)
 {
 	ft_printf("\n");
-//	print_words_type(list);
-//	print_list_word(list);
+	//print_words_type(list);
+	//print_list_word(list);
 	if (!err_in_words(list))
 	{
 		actions_blocs(list, env, table);

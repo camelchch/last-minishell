@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/20 17:20:25 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/21 13:48:26 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -412,4 +412,7 @@ void		free_saver_fd(t_save_fd *recover);
 //signal.c
 void		signal_inh(int sign);
 void		signal_quith(int sign);
+
+//my_free.c
+void		ft_freestrstr(char **cp_env);
 #endif
