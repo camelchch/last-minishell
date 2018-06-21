@@ -40,6 +40,7 @@ int		main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 	cp_env = NULL;
+	all_path = NULL;
 	signal(SIGINT, signal_inh);
 	cp_env = copy_env(env);
 	update_shlvl(&cp_env);
@@ -50,5 +51,6 @@ int		main(int ac, char **av, char **env)
 	//	get_autoline(table);
 	free_sh_table(table, 100);
 	ft_freestrstr(cp_env);
+	ft_freestrstr(all_path);
 	return (0);
 }
