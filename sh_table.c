@@ -89,8 +89,8 @@ void	init_shtable(t_sh *table, char **path)
 			index = calcu_index(add->name);
 			addin_table(table, add, index);
 		}
-		}
 		closedir(dirp);
+		}
 		path++;
 	}
 }
