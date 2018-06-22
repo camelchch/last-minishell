@@ -6,7 +6,7 @@
 #    By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/06 21:06:58 by fsabatie          #+#    #+#              #
-#    Updated: 2018/06/21 15:31:59 by saxiao           ###   ########.fr        #
+#    Updated: 2018/06/22 17:21:33 by saxiao           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,7 @@ OBJ = $(SRC:.c=.o)
 #LIB = $(addprefix $(INC_PATH)/,$(LIB_PATH))
 LIBFT = $(addprefix $(LIB_PATH)/,$(LIB_NAME))
 PRINTF = $(addprefix $(LIB_PATH)/,$(PRINTF_NAME))
-#CPPFLAGS = -Wall -Werror -Wextra -ltermcap #-I.
+GPPFLAGS = -Wall -Werror -Wextra #-I.
 CPPFLAGS = -ltermcap #-I.
 
 # Defining colors
@@ -63,7 +63,7 @@ $(NAME):
 	@echo " ${GREEN}Done."
 	@cd ..
 	@echo "${GREEN}Compiling minishell" | tr -d '\n'
-	@gcc $(CPPFLAGS) -c $(SRC)
+	@gcc -c $(GPPFLAGS) $(SRC)
 	@gcc $(CPPFLAGS) $(OBJ) $(LIBFT) $(PRINTF) -o $(NAME)
 	@echo " ${GREEN}Done."
 

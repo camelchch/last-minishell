@@ -18,7 +18,7 @@ static int			program_exit_after(t_word *li)
 		return (1);
 	return (0);
 }
-
+/*
 static int			heredoc_exit_before(t_word *li)
 {
 	while (li && li->type != DLESS && li->type != AND && li->type != OR &&\
@@ -28,6 +28,7 @@ static int			heredoc_exit_before(t_word *li)
 		return (1);
 	return (0);
 }
+*/
 
 static int		test_for_err_func(t_word *cp)
 {

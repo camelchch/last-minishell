@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include "minishell.h"
-
+/*
 static int	raw_termi_mode()
 {
 	struct	termios	tattr;
@@ -24,6 +24,7 @@ static int	raw_termi_mode()
 			return (-1);
 	return (0);
 }
+*/
 
 static void	default_termi_mode()
 {

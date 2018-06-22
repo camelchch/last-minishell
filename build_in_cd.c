@@ -20,20 +20,31 @@ static void	init_tempwd(char **tempwd, int ct, char ***paras, char *path)
 		*/
 }
 
-static void		oldpwd_home(char **cp, char ***env, int ct)
+static void	oldpwd_home(char *cp, char ***env, int ct)
 {
-	(void)ct;
-	if (ct == 1 || !ft_strcmp(*cp, "~"))
+	char	*temp;
+
+	if (ct == 1 || ft_strstr(cp, "~"))
 	{
-		*cp = ft_getenv(*env, "HOME");
-		if (!*cp)
+		temp = ft_getenv(*env, "HOME");
+		if (!temp)
+		{
 			ft_putendl_fd("enviroment HOME is not set", 2);
+			ft_bzero(cp, PATH_MAX + 1);
+		}
+		else
+			ct == 1 ? ft_strcpy(cp, temp) : replace_home(cp, temp);
 	}
 	else
 	{
-		*cp = ft_getenv(*env, "OLDPWD");
-		if (!*cp)
+		temp = ft_getenv(*env, "OLDPWD");
+		if (!temp)
+		{
 			ft_putendl_fd("enviroment OLDPWD  is not set", 2);
+			ft_bzero(cp, PATH_MAX + 1);
+		}
+		else
+			ft_strcpy(cp, temp);
 	}
 }
 
@@ -60,21 +71,20 @@ int		cd(char **paras, char ***env)
 	int		ct;
 	char	*tempwd[4];
 	char	path[PATH_MAX + 1];
-	char	*cp;
+	char	cp[PATH_MAX + 1];
 
 	ct = nb_str(paras);
-	if (ct == 1)
-		cp = paras[0];
-	else
-		cp = paras[1];
+	ft_bzero(cp, PATH_MAX + 1);
+	if (ct == 2)
+		ft_strcpy(cp, paras[1]);
 	if (ct != 1 && ct != 2)
 		return(return_message("Too many arguments--usage : cd path\n", 1, 2));
 	else
 	{
 		init_tempwd(tempwd, ct, &paras, path);
-		if (ct == 1 || (ct == 2 && (!ft_strcmp(*(paras + 1), "~") || !ft_strcmp(*(paras + 1), "-"))))
-			oldpwd_home(&cp, env, ct);
-		if (cp)
+		if (ct == 1 || (ct == 2 && (ft_strstr(*(paras + 1), "~") || !ft_strcmp(*(paras + 1), "-"))))
+			oldpwd_home(cp, env, ct);
+		if (ft_strlen(cp))
 			for_cd(cp, env, tempwd, path);
 		return (0);
 	}

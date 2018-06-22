@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/21 16:28:44 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/22 17:26:13 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,12 +242,13 @@ void		update_lastapp(char *lastcmd, char ***env);
 
 //set_unset_env
 int			nb_str(char **str);
-void		set_env(char **paras, char ***env);
+int			set_env(char **paras, char ***env);
 char		**unset_env(char **paras, char **env);
 
 //do_buildin.c
 int			is_buildin(char *app);
 void		do_build(char **paras, char ***env, t_sh *table);
+void		replace_home(char *cp, char *home);
 
 //build_in_cd.c
 int			cd(char **paras, char ***env);

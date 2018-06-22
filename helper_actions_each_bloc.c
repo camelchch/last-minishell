@@ -36,6 +36,7 @@ char	**args_each_exev(t_word *list, char **env)
 	int		i;
 
 	i = 0;
+	(void)env;
 	res = malloc(sizeof(char *) * (nb_args_each_exev(list) + 1));
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT && list->type != PIPE)
 	{
