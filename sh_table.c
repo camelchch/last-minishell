@@ -73,7 +73,7 @@ void	init_shtable(t_sh *table, char **path)
 	int				index;
 	t_table			*add;
 
-	ft_bzero(table, sizeof(t_sh) * 100);
+	free_sh_table(table, 100);
 	while (path && *path)
 	{
 		if ((dirp = opendir(*path)))
@@ -81,6 +81,8 @@ void	init_shtable(t_sh *table, char **path)
 		while ((dir = readdir(dirp)))
 		{
 			add = (t_table *)malloc(sizeof(t_table));
+			ft_bzero(add->name, NAME_MAX + 1);
+			ft_bzero(add->path, PATH_MAX + 1);
 			ft_strcpy(add->name, dir->d_name);
 			ft_strcpy(add->path, *path);
 			ft_strcat(add->path, "/");

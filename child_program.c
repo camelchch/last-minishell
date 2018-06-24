@@ -33,7 +33,8 @@ void	child_pro_bin(char **paras, char **env, t_sh *table)
 	if (!path)
 	{
 		put2_str_fd(*paras, " there is no such program.\n", 2);
-		exit(0) ;
+		ft_exit(&env, table);
+		//exit(0) ;
 	}
 	else
 	{

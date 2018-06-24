@@ -25,8 +25,10 @@ static void	echo(char **paras)
 	}
 }
 
-static void	ft_exit(void)
+void		ft_exit(char ***env, t_sh *table)
 {
+	free_sh_table(table, 100);
+	ft_freestrstr(*env);
 	exit(0);
 }
 
@@ -64,5 +66,5 @@ void	do_build(char **paras, char ***env, t_sh *table)
 	else if (!ft_strcmp(*paras, "env"))
 		put_env(*env, paras, table);
 	else if (!ft_strcmp(*paras, "exit"))
-		ft_exit();
+		ft_exit(env, table);
 }

@@ -17,17 +17,22 @@ void	free_sh_table(t_sh *table, int index)
 {
 	int			i;
 	t_table		*cp;
+	t_table		*temp;
 
 	i = 0;
 	while (i < index)
 	{
-		while (table[i].sh_ta)
+		if (table[i].sh_ta)
 		{
 			cp = table[i].sh_ta;
-			while (cp->next)
+			while (cp)
+			{
+				temp = cp;
 				cp = cp->next;
-			free(cp);
+			free(temp);
+			}
 		}
+		table[i].sh_ta = NULL;
 		i++;
 	}
 }

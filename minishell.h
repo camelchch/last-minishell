@@ -249,6 +249,7 @@ char		**unset_env(char **paras, char **env);
 int			is_buildin(char *app);
 void		do_build(char **paras, char ***env, t_sh *table);
 void		replace_home(char *cp, char *home);
+void		ft_exit(char ***env, t_sh *table);
 
 //build_in_cd.c
 int			cd(char **paras, char ***env);
