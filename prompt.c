@@ -58,7 +58,7 @@ int			prompt(char **env, t_sh *table)
 			init_add(add, new_line);
 			add_history(&history, add);
 			list = command_to_words(new_line);
-			actions_each_line(env, list, table);
+			actions_each_line(&env, list, table);
 			free_word_list(list);
 		}
 		if (!ft_strcmp(new_line, "exit"))

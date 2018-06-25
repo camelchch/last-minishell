@@ -1,37 +1,120 @@
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include "minishell.h"
-
-size_t		get_key()
-{
-	unsigned char	buff[11];
-
-	//ft_bzero(buff, 4);
-	memset(buff, 0, 11);
-	read(0, buff, 11);
-	printf("%u %u %u %u %u %u %u %u %u %u\n", buff[0], buff[1], buff[2], \
-		buff[3], buff[4], buff[5], buff[6], buff[7], buff[8], buff[9]);
-	//return (*buff + (*buff << 8) + (*buff << 16));
-	unsigned long a= buff[0];
-	unsigned long b=buff[1]<< 8;
-	unsigned long c= buff[2] <<  16;
-	unsigned long d= buff[3] <<  24;
-	unsigned long e= (unsigned long)buff[4] <<  32;
-	unsigned long f= (unsigned long) buff[5] <<  40;
-//	printf("%lu %lu %lu %lu\n", a, b, c, a+b+c);
-	return (a + b);
-}
-
-
-int		main()
-{
-	unsigned long	key;
-
-	key = get_key();
-	printf("size of unsigned long log=%d\n", (int)sizeof(unsigned long));
-	printf("key=%lu\n", key);
-	if (33 <= key && key <= 126)
-		printf("key is printable, key =%c\n", (char)key);
-}
-
+1
+42sh_tmp.c
+Makefile
+a.out
+actions_each_bloc.c
+actions_each_bloc.o
+actions_each_line.c
+actions_each_line.o
+all_case_redirection.c
+all_case_redirection.o
+author
+build_in.c
+build_in.o
+build_in_1.c
+build_in_cd.c
+build_in_cd.o
+build_in_env.c
+build_in_env.o
+child_program.c
+child_program.o
+command_to_words.c
+command_to_words.o
+do_buildin.c
+do_buildin.o
+err
+err.c
+err_in_words.c
+err_in_words.o
+fichier
+fifi
+for_init_seprator.c
+for_init_seprator.o
+helper.c
+helper.o
+helper_actions_each_bloc.c
+helper_actions_each_bloc.o
+helper_actions_each_bloc_2.c
+helper_actions_each_bloc_2.o
+here_doc_bse_word.c
+here_doc_bse_word.o
+init_add_word.c
+init_add_word.o
+init_seprator.c
+init_seprator.o
+is_lexing_type.c
+is_lexing_type.o
+less_case_redirection.c
+less_case_redirection.o
+lexing.c
+libft
+line_cp_cut.c
+line_cp_cut.o
+line_ctrl_d.c
+line_ctrl_d.o
+line_delete.c
+line_delete.o
+line_edition.c
+line_edition.o
+line_engine.c
+line_engine.o
+line_get_line.c
+line_get_line.o
+line_his_up_down.c
+line_his_up_down.o
+line_mv_left_right.c
+line_mv_left_right.o
+line_paste_go_updown.c
+line_paste_go_updown.o
+line_printable.c
+line_printable.o
+log
+main.c
+main.o
+minishell
+minishell.dSYM
+minishell.h
+my_free.c
+my_free.o
+my_here_doc.c
+my_here_doc.o
+old_minishell
+old_parsing.c
+out
+out2
+parsing.c
+parsing.h
+pipes.c
+pipes.o
+print.c
+print.o
+prompt.c
+prompt.o
+recover_fd__buildin.c
+recover_fd__buildin.o
+rm_quoting_in_list.c
+rm_quoting_in_list.o
+rm_quoting_in_word.c
+rm_quoting_in_word.o
+set_unset_env.c
+set_unset_env.o
+sh_table.c
+sh_table.o
+shell.c
+shell.h
+shell.o
+signal.c
+signal.o
+teeest
+termcap_setting.c
+termcap_setting.o
+test
+test.c
+test.sh
+test1.c
+test_key
+try
+try.c
+update_env.c
+update_env.o
+       2       2      13

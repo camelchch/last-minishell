@@ -27,7 +27,7 @@ void		print_list_word(t_word *list)
 	}
 }
 
-static void	actions_blocs(t_word *list, char **env, t_sh *table)
+static void	actions_blocs(t_word *list, char ***env, t_sh *table)
 {
 	t_word	*cp;
 	int		find_bloc;
@@ -40,7 +40,7 @@ static void	actions_blocs(t_word *list, char **env, t_sh *table)
 	{
 	while (cp && !is_logic(cp->type) && cp->type != SEMI_DOT)
 	{
-		if (!remove_quoting_bloc(cp, env))
+		if (!remove_quoting_bloc(cp, *env))
 			actions_each_bloc(cp, env, table);
 	while (cp && !is_logic(cp->type) && cp->type != SEMI_DOT)
 			cp = cp->next;
@@ -49,10 +49,12 @@ static void	actions_blocs(t_word *list, char **env, t_sh *table)
 	}
 	if (cp)
 		cp = cp->next;
+	//if (cp)
+	//	ft_printf("\n");
 	}
 }
 
-void		actions_each_line(char **env, t_word *list, t_sh *table)
+void		actions_each_line(char ***env, t_word *list, t_sh *table)
 {
 	if (!err_in_words(list))
 		actions_blocs(list, env, table);

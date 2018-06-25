@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/22 17:26:13 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/25 16:41:01 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,8 @@ typedef struct s_save_fd{
 #define OPTION_SHIFT_U 43202
 #define OPTION_SHIFT_D 36547
 #define CONTRL_N 14
+#define SHIFT_UP 71683997260571
+#define SHIFT_DOWN 71683997260571
 #define CONTRL_F 6
 #define CONTRL_D 4
 #define DELETE_AT_POSITION 2117294875
@@ -170,7 +172,6 @@ typedef struct s_key
 char		new_line[MAX_BUF];
 t_line		a_line;
 
-void		actions_each_line(char **env, t_word *list, t_sh *table);
 char		*get_autoline(t_sh *table);
 void		shell(int ac, char **av, char **env, t_sh *table);
 void		each_cmdline(char *cmdline, char **env, t_sh *table);
@@ -242,7 +243,7 @@ void		update_lastapp(char *lastcmd, char ***env);
 
 //set_unset_env
 int			nb_str(char **str);
-int			set_env(char **paras, char ***env);
+char		**set_env(char **paras, char ***env);
 char		**unset_env(char **paras, char **env);
 
 //do_buildin.c
@@ -392,9 +393,10 @@ void		do_child_pro(t_word *list, char **paras, char **env, t_sh *table);
 //actions_each_line.c
 int			dslash_before(char *line, int index);
 void		print_list_word(t_word *list);
+void		actions_each_line(char ***env, t_word *list, t_sh *table);
 
 //actions_each_bloc.c
-int			actions_each_bloc(t_word *list, char **env, t_sh *table);
+int			actions_each_bloc(t_word *list, char ***env, t_sh *table);
 
 //helper_actiond_each_bloc.c
 int			nb_pipe_eachbloc(t_word *list);
@@ -405,7 +407,7 @@ int			do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro);
 //helper_actiond_each_bloc_2.c
 void		init_int_table(int *table, int len);
 int			do_all_pipe(int *pipe_fd, int nb_pipe);
-int			pro_is_buildin_no_pipe(t_word *list, char **env, t_sh *table);
+int			pro_is_buildin_no_pipe(t_word *list, char ***env, t_sh *table);
 
 //recover_fd__buildin.c
 t_save_fd	*fd_restorage(t_word *list, t_save_fd *recover);
@@ -421,4 +423,7 @@ void		ft_freestrstr(char **cp_env);
 void		free_sh_table(t_sh *table, int index);
 void		free_pro_args(t_program *pro, int index);
 void		free_word_list(t_word *list);
+
+//helper.c
+t_table		*malloc_add_sh(void);
 #endif

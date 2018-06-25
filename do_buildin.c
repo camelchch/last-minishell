@@ -47,8 +47,11 @@ void		replace_home(char *cp, char *home)
 	ft_strcat(cp, temp);
 }
 
-void	do_build(char **paras, char ***env, t_sh *table)
+void		do_build(char **paras, char ***env, t_sh *table)
 {
+	char	**all_path;
+
+	all_path = NULL;
 	update_lastapp(*paras, env);
 	if (!ft_strcmp(*paras, "cd"))
 		cd(paras, env);
@@ -61,7 +64,11 @@ void	do_build(char **paras, char ***env, t_sh *table)
 		else
 			set_env(paras, env);
 		if (*(paras + 1) && !ft_strcmp(*(paras + 1), "PATH"))
-			init_shtable(table, path(*env));
+		{
+			all_path = path(*env);
+			init_shtable(table, all_path);
+			ft_freestrstr(all_path);
+		}
 	}
 	else if (!ft_strcmp(*paras, "env"))
 		put_env(*env, paras, table);

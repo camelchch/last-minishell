@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 15:43:03 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/14 12:58:53 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/25 17:21:45 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,14 +80,11 @@ void	init_shtable(t_sh *table, char **path)
 			{
 		while ((dir = readdir(dirp)))
 		{
-			add = (t_table *)malloc(sizeof(t_table));
-			ft_bzero(add->name, NAME_MAX + 1);
-			ft_bzero(add->path, PATH_MAX + 1);
+			add = malloc_add_sh();
 			ft_strcpy(add->name, dir->d_name);
 			ft_strcpy(add->path, *path);
 			ft_strcat(add->path, "/");
 			ft_strcat(add->path, add->name);
-			add->next = NULL;
 			index = calcu_index(add->name);
 			addin_table(table, add, index);
 		}

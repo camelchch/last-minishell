@@ -48,7 +48,7 @@ static void	init_for_each_bloc_2(t_word *list, int *nb_pipe, int *i)
 	*i = -1;
 }
 
-int		actions_each_bloc(t_word *list, char **env, t_sh *table)
+int		actions_each_bloc(t_word *list, char ***env, t_sh *table)
 {
 	int			pipe_fd[MAX_BUF];
 	t_program	pro[MAX_BUF];
@@ -64,13 +64,13 @@ int		actions_each_bloc(t_word *list, char **env, t_sh *table)
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
 	{
 		my_here_doc_word(list);
-		pro[++i].pro_args = args_each_exev(list, env);
+		pro[++i].pro_args = args_each_exev(list, *env);
 		nb_pid[i] = fork();
 		if (nb_pid[i] < 0)
 			ft_putendl_fd("fork failed", 2);
 		else if (nb_pid[i] == 0)
 			(do_all_redirection(list, pipe_fd, nb_pipe, i)) ? exit(0) :\
-				do_child_pro(list, pro[i].pro_args, env, table);
+				do_child_pro(list, pro[i].pro_args, *env, table);
 		list = close_fd_mv_list(list, i , pipe_fd, nb_pipe);
 	}
 	free_pro_args(pro, MAX_BUF);

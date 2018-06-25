@@ -6,7 +6,7 @@
 #    By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/06 21:06:58 by fsabatie          #+#    #+#              #
-#    Updated: 2018/06/22 17:21:33 by saxiao           ###   ########.fr        #
+#    Updated: 2018/06/25 15:53:55 by saxiao           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,7 +29,7 @@ SRC = 	rm_quoting_in_list.c rm_quoting_in_word.c print.c\
 		line_printable.c line_his_up_down.c line_cp_cut.c line_paste_go_updown.c\
 		line_get_line.c prompt.c actions_each_line.c actions_each_bloc.c \
 		helper_actions_each_bloc.c helper_actions_each_bloc_2.c line_ctrl_d.c\
-		recover_fd__buildin.c my_free.c
+		recover_fd__buildin.c my_free.c helper.c
 
 LIB_NAME = libft.a
 PRINTF_NAME = libftprintf.a
@@ -40,7 +40,7 @@ OBJ = $(SRC:.c=.o)
 #LIB = $(addprefix $(INC_PATH)/,$(LIB_PATH))
 LIBFT = $(addprefix $(LIB_PATH)/,$(LIB_NAME))
 PRINTF = $(addprefix $(LIB_PATH)/,$(PRINTF_NAME))
-GPPFLAGS = -Wall -Werror -Wextra #-I.
+GPPFLAGS = -Wall -Werror -Wextra -g3 #-I.
 CPPFLAGS = -ltermcap #-I.
 
 # Defining colors

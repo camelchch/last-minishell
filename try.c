@@ -29,7 +29,7 @@ int		main()
 	unsigned long	key;
 
 	key = get_key();
-	printf("size of unsigned long log=%d\n", (int)sizeof(unsigned long));
+//	printf("size of unsigned long log=%lu\n", (int)sizeof(unsigned long));
 	printf("key=%lu\n", key);
 	if (33 <= key && key <= 126)
 		printf("key is printable, key =%c\n", (char)key);

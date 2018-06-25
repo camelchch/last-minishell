@@ -25,14 +25,16 @@ int		redi_less(t_word *list)
 		fd = ft_atoi(list->pre->word);
 	else
 		fd = 0;
-	//if (access(list->next->word, F_OK))
 	into_fd = open(list->next->word, O_RDONLY);
 	if (into_fd != -1)
 	{
+		if (into_fd != fd)
+		{
 		if (dup2(into_fd, fd) < 0)
 			return(return_message("dup2 failed\n", -1, 2));
 		if (close(into_fd) < 0)
 			return(return_message("close file failed\n", -1, 2));
+		}
 	return (0);
 	}
 	else
