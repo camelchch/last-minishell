@@ -59,32 +59,6 @@ void			init_line(char	*prompt, t_line *line)
 
 }
 
-static int			open_quote_exit(char *line)
-{
-	int		open_dquote;
-	int		open_squote;
-	int		i;
-
-	open_dquote = -1;
-	open_squote = -1;
-	i = -1;
-	while (line[++i])
-	{
-		if (line[i] == '"' && open_squote < 0 && dslash_before(line, i))
-			open_dquote = -open_dquote;
-		else if (line[i] == '\'' && open_dquote < 0)
-			open_squote = -open_squote;
-		else if (line[i] == '\\' && open_dquote < 0 && open_squote < 0 && \
-		dslash_before(line, i) && !line[i + 1])
-			return(return_message("\nUnmatched \\ .", 1, 1));
-	}
-	if (open_dquote > 0)
-		return(return_message("\nUnmatched \" .", 1, 1));
-	if (open_squote > 0)
-		return(return_message("\nUnmatched \' .", 1, 1));
-	return (0);
-}
-
 int					get_line(char *prompt, char *new_line, t_line *line)
 {
 	unsigned long	key;
@@ -95,20 +69,18 @@ int					get_line(char *prompt, char *new_line, t_line *line)
 	ft_printf("%s", prompt);
 	if (init_attr(SETNEW) == 0)
 	{
-	init_line(prompt,line);
-	while (((key = (int)get_key()) && key != '\n') && !end_line)
-		line->engine(line, key);
-	init_attr(SETOLD);
-	if (open_quote_exit((char *)line->buf))
-		ft_bzero(line->buf, MAX_BUF);
-	ft_strcpy(new_line, (const char *)line->buf);
+		with_termcap = 1;
+		init_line(prompt,line);
+		while (((key = (int)get_key()) && key != '\n') && !end_line)
+			line->engine(line, key);
+		init_attr(SETOLD);
+		ft_strcpy(new_line, (const char *)line->buf);
 	}
 	else
 	{
 		get_next_line(1, &ligne);
-	if (!open_quote_exit(ligne))
-	ft_strcpy(new_line, (const char *)ligne);
-	ligne ? free(ligne) : (void)ligne;
+		ft_strcpy(new_line, (const char *)ligne);
+		ligne ? free(ligne) : (void)ligne;
 	}
 	return (0);
 }

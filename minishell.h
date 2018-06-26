@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/25 16:41:01 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/26 13:30:31 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,10 @@
 #ifndef MINISHELL_H
 int		open_dquote;
 int		open_squote;
+int		open_backslash;
 int		line_edition_ing;
 int		end_line;
+int		with_termcap;
 
 #define MAX_BUF 4096
 #define SETNEW 1
@@ -227,6 +229,10 @@ int			go_down(t_line *line);
 //line_get_line.c
 int			get_line(char *prompt, char *new_line, t_line *line);
 void		init_line(char	*prompt, t_line *line);
+
+//line_prompt_open_quote.c
+void		prompt_open_quote(char *line);
+
 
 //prompt.c
 int			prompt(char **env, t_sh *table);

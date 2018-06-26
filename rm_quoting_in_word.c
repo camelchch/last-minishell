@@ -26,21 +26,27 @@ static void	case_dquote(t_helper *help, char *cp, char *word)
 		word[help->index++] = '"';
 }
 
-static void	case_squote(t_helper *help, char *word)
+static void	case_squote(t_helper *help, char *cp, char *word)
 {
 	if (open_dquote < 0)
+	{
+		if (!dslash_before(cp, help->i))
+			word[help->index - 1] = '\'';
+		else
 		open_squote = -open_squote;
+	}
 	else
 		word[help->index++] = '\'';
 }
 
 static void	other_case(t_helper *help, char *cp, char *word)
 {
-	if (!(cp[help->i] == '\\' && !dslash_before(cp, help->i) && open_squote < 0))
-		word[help->index++] = cp[help->i];
-	else if (open_dquote < 0 && open_squote < 0 && help->i - 1 >= 0 && \
+//	if (!(cp[help->i] == '\\' && !dslash_before(cp, help->i) && open_squote < 0))
+	 if (open_dquote < 0 && open_squote < 0 && help->i - 1 >= 0 && \
 			cp[help->i - 1] == '\\' && dslash_before(cp, help->i - 1))
 		word[help->index - 1] = cp[help->i];
+	else if (!(cp[help->i] == '\\' && !dslash_before(cp, help->i) && open_squote < 0))
+		word[help->index++] = cp[help->i];
 }
 
 int		remove_quoting_word(char *word, char **env)
@@ -64,7 +70,7 @@ int		remove_quoting_word(char *word, char **env)
 		if (cp[help.i] == '"')
 			case_dquote(&help, cp, word);
 		else if (cp[help.i] == '\'')
-			case_squote(&help, word);
+			case_squote(&help, cp,  word);
 		else
 			other_case(&help, cp, word);
 	}

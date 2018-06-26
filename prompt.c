@@ -40,29 +40,27 @@ static int		not_empty(char *new_line)
 int			prompt(char **env, t_sh *table)
 {
 	t_history			*add;
-	int					quit;
 	t_word				*list;
 
-	quit = 0;
 	ft_strcpy(temp_file, "./42sh_tmp.c");
-	while (!quit)
+	while (42)
 	{
 		line_edition_ing = 1;
 		add = malloc(sizeof(t_history));
 		ft_bzero(new_line, MAX_BUF);
 		get_line("$> ",new_line, &a_line);
+		if (with_termcap)
 			ft_printf("\n");
 		if (not_empty(new_line))
 		{
 			line_edition_ing = 0;
+			prompt_open_quote(new_line);
 			init_add(add, new_line);
 			add_history(&history, add);
 			list = command_to_words(new_line);
 			actions_each_line(&env, list, table);
 			free_word_list(list);
 		}
-		if (!ft_strcmp(new_line, "exit"))
-			quit = 1;
 	}
 	return (0);
 }
