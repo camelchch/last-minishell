@@ -395,6 +395,7 @@ int				err_open_file(t_word *list);
 void		child_pro_bin(char **paras, char **env, t_sh *table);
 void		child_pro_buildin(t_word *list, char **paras, char **env, t_sh *table);
 void		do_child_pro(t_word *list, char **paras, char **env, t_sh *table);
+char		*path_in_sh(char *app, t_sh *table);
 
 //actions_each_line.c
 int			dslash_before(char *line, int index);
