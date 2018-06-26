@@ -27,20 +27,23 @@ void	child_pro_bin(char **paras, char **env, t_sh *table)
 		update_lastapp(*paras, &env);
 		execve(*paras, paras, env);
 		put2_str_fd(*paras, " permission denied for this program.\n", 2);
-		exit(0) ;
+		exit(0);
 	}
 	path = path_in_sh(*paras, table);
 	if (!path)
 	{
 		put2_str_fd(*paras, " there is no such program.\n", 2);
-		exit(0) ;
+		free_sh_table(table, 100);
+		ft_freestrstr(env);
+		free(paras);
+		exit(0);
 	}
 	else
 	{
 		update_lastapp(path, &env);
 		execve(path, paras, env);
 		put2_str_fd(*paras, " permission denied for this program.\n", 2);
-		exit(0) ;
+		exit(0);
 	}
 }
 
