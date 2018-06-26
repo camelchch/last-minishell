@@ -6,7 +6,7 @@
 #    By: fsabatie <fsabatie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/06 21:06:58 by fsabatie          #+#    #+#              #
-#    Updated: 2018/06/26 11:42:01 by saxiao           ###   ########.fr        #
+#    Updated: 2018/06/26 15:50:50 by saxiao           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,7 @@ OBJ = $(SRC:.c=.o)
 #LIB = $(addprefix $(INC_PATH)/,$(LIB_PATH))
 LIBFT = $(addprefix $(LIB_PATH)/,$(LIB_NAME))
 PRINTF = $(addprefix $(LIB_PATH)/,$(PRINTF_NAME))
-GPPFLAGS = -Wall -Werror -Wextra -g3 #-I.
+GPPFLAGS = -Wall -Werror -Wextra -g3#-I.
 CPPFLAGS = -ltermcap #-I.
 
 # Defining colors

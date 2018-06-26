@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+//the case '\\\' is not yet totally done
 static int			open_quote_exit(char *line)
 {
 	int		i;
@@ -12,7 +13,7 @@ static int			open_quote_exit(char *line)
 	{
 		if (line[i] == '"' && open_squote < 0 && dslash_before(line, i))
 			open_dquote = -open_dquote;
-		else if (line[i] == '\'' && open_dquote < 0)
+		else if (line[i] == '\'' && open_dquote < 0 && !(!dslash_before(line, i) && open_squote < 0))
 			open_squote = -open_squote;
 		else if (line[i] == '\\' && open_dquote < 0 && open_squote < 0 && \
 				dslash_before(line, i) && !line[i + 1])
