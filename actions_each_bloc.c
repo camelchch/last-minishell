@@ -22,7 +22,7 @@ static t_word	*close_fd_mv_list(t_word *list, int i, int *pipe_fd, int nb_pipe)
 	return (list);
 }
 
-static void	wait_all_pid(int *nb_pid, int i)
+static int	wait_all_pid(int *nb_pid, int i)
 {
 	int		j;
 	int		status;
@@ -33,6 +33,7 @@ static void	wait_all_pid(int *nb_pid, int i)
 		if (nb_pid[j] != -1)
 			waitpid(nb_pid[j], &status, WUNTRACED);
 	}
+	return (0);
 }
 
 static void	init_for_each_bloc(t_program *pro, int index,  int *nb_pid, int *pipe_fd)
@@ -52,12 +53,16 @@ static void	init_for_each_bloc_2(t_word *list, int *nb_pipe, int *i)
 	*i = -1;
 }
 
-int		valide_program(t_word *list, char **str, char **env, t_sh *table)
+int		put2_str_fd_return(char *str1, char *str2, int fd, int return_value)
+{
+	put2_str_fd(str1, str2, fd);
+	return (return_value);
+}
+
+int		valide_program(char **str, t_sh *table)
 {
 	char	*path;
 
-	(void)env;
-	(void)list;
 	if (!str)
 		return (0);
 	if (is_buildin(*str))
@@ -65,21 +70,14 @@ int		valide_program(t_word *list, char **str, char **env, t_sh *table)
 	if (!access(*str, F_OK))
 	{
 		if (access(*str, X_OK))
-		{
-			if (errno == EACCES)
-			put2_str_fd(*str, " permission denied for this program.\n", 2);
-			else
-			put2_str_fd(*str, " there is no such program.\n", 2);
-			return (0);
-		}
+			return (put2_str_fd_return(*str, " permission denied.\n", 2, 0));
 		return (1);
 	}
 	path = path_in_sh(*str, table);
 	if (!path)
-	{
-		put2_str_fd(*str, " there is no such program.\n", 2);
-		return (0);
-	}
+		return (put2_str_fd_return(*str, " there is no such program.\n", 2, 0));
+	if (access(path, X_OK))
+		return (put2_str_fd_return(*str, " permission denied.\n", 2, 0));
 	return (1);
 }
 
@@ -98,23 +96,18 @@ int		actions_each_bloc(t_word *list, char ***env, t_sh *table)
 	do_all_pipe(pipe_fd, nb_pipe);
 	while (list && !is_logic(list->type) && list->type != SEMI_DOT)
 	{
-		//	print_words_type(list);
 		my_here_doc_word(list);
 		pro[++i].pro_args = args_each_exev(list, *env);
-		if (valide_program(list, pro[i].pro_args, *env, table))
+		if (valide_program(pro[i].pro_args, table))
 		{
-			nb_pid[i] = fork();
-			if (nb_pid[i] < 0)
-				ft_putendl_fd("fork failed", 2);
-			else if (nb_pid[i] == 0)
+			if ((nb_pid[i] = fork()) == 0)
 				(do_all_redirection(list, pipe_fd, nb_pipe, i)) ? exit(0) :\
 					do_child_pro(list, pro[i].pro_args, *env, table);
 		}
 		list = close_fd_mv_list(list, i , pipe_fd, nb_pipe);
 	}
 	free_pro_args(pro, MAX_BUF);
-	wait_all_pid(nb_pid, i);
-	return (0);
+	return (wait_all_pid(nb_pid, i));
 }
 /*
    int		actions_each_bloc(t_word *list, char ***env, t_sh *table)

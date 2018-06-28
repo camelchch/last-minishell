@@ -11,7 +11,7 @@ void	init_int_table(int *table, int len)
 		table[i] = -1;
 }
 
-int		do_all_pipe(int *pipe_fd, int nb_pipe)
+void		do_all_pipe(int *pipe_fd, int nb_pipe)
 {
 	int		i;
 
@@ -19,13 +19,9 @@ int		do_all_pipe(int *pipe_fd, int nb_pipe)
 	while (++i <= nb_pipe)
 	{
 		if (pipe(pipe_fd) < 0)
-		{
-			ft_printf("pipe failed in  do all pipe pipe()\n");
-			i = -1;
-		}
+			ft_putendl_fd("pipe failed in  do all pipe", 2);
 		pipe_fd = pipe_fd + 2;
 	}
-	return (i);
 }
 
 int		pro_is_buildin_no_pipe(t_word *list, char ***env, t_sh *table)

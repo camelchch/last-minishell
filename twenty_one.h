@@ -6,7 +6,7 @@
 /*   By: saxiao <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/31 12:26:55 by saxiao            #+#    #+#             */
-/*   Updated: 2018/06/27 12:24:51 by saxiao           ###   ########.fr       */
+/*   Updated: 2018/06/29 00:10:47 by saxiao           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,17 @@
 #include <sys/types.h>
 #include "libft/libft.h"
 
-#ifndef MINISHELL_H
+#ifndef TWENTY_ONE_H
 int		open_dquote;
 int		open_squote;
 int		open_backslash;
-int		line_edition_ing;
+//int		line_edition_ing;
 int		end_line;
 int		with_termcap;
+int		inside_doc_quote;
+int		clc_get;
 
-#define MAX_BUF 4096
+#define MAX_BUF 10000
 #define SETNEW 1
 #define SETOLD 0
 
@@ -47,23 +49,23 @@ typedef struct s_vari
 	pid_t	pid;
 }			t_vari;
 
-typedef enum s_type {
-	PROGRAM = 10,
-	ARG, //
-	LESS,//< 
-	LESSAND,// <&
-	LESSANDMINUS,// <&-
-	DLESS, //<<
-	AND, //&&
-	GREAT, //>
-	GREATAND, // >&
-	GREATANDMINUS, // >&-
-	DGREAT, //>>
-	OR,//||
-	PIPE, //|
-	SEMI_DOT, // ;
-	FILES, //
-	FD, //
+typedef enum s_type{
+	PROGRAM,
+	ARG,
+	LESS,
+	LESSAND,
+	LESSANDMINUS,
+	DLESS,
+	AND,
+	GREAT,
+	GREATAND,
+	GREATANDMINUS,
+	DGREAT,
+	OR,
+	PIPE,
+	SEMI_DOT,
+	FILES,
+	FD, 
 	HERE_DOC_MARK,
 	BUIDIN,
 }			t_type;
@@ -179,7 +181,6 @@ void		shell(int ac, char **av, char **env, t_sh *table);
 void		each_cmdline(char *cmdline, char **env, t_sh *table);
 void		pipes(char *cmdline, int nb_pipe, char ***env, t_sh *table);
 int			no_pipe(char *cmdline);
-void		signal_quith(int sign);
 
 //termcap_setting.c
 int		init_attr(int mod);
@@ -255,7 +256,7 @@ char		**unset_env(char **paras, char **env);
 //do_buildin.c
 int			is_buildin(char *app);
 void		do_build(char **paras, char ***env, t_sh *table);
-void		replace_home(char *cp, char *home);
+void		replace_home_cd(char *cp, char *home);
 void		ft_exit(char ***env, t_sh *table);
 
 //build_in_cd.c
@@ -263,62 +264,6 @@ int			cd(char **paras, char ***env);
 
 //build_in_env.c
 int			put_env(char **env, char **paras, t_sh *table);
-void		put_strstr(char **str);
-void		put2_str_fd(char *str1, char *str2, int fd);
-
-
-//below is what i need with parsing
-/*
-ls -la /bin > file1 2>&- && cat -e file1 | less
-
-WORD  >>>> ls   >    file1  2>&-    cat -e  file1  |    less
-TOKEN >>>> BIN DLESS FILE  GREATAND BIN OPT FILE  PIPE  BIN
-
-~~ exemple fait a l'arrache ~~
-*/
-
-typedef enum s_token {
-	//BIN = 0,
-	//BUILTIN,
-//	OPT,
-//	ARG,
-	FILEREDI,
-	OPERAND,
-	//FILES,
-}			t_token;
-
-/*
-t_list *l;
-
-
-if (l->next->tok == SUBTOKEN)
-{
-	if (l->next->tok == PIPE)
-		dup2(l->out.fd, STDOUT_FILENO);
-}
-
-if (l->prev->tok == SUBTOKEN && l->prev->sub == PIPE)
-*/
-
-
-typedef struct	s_file{
-	char 	*name;
-	int		fd;
-}		t_file;
-
-typedef struct		s_list_token{
-	t_token			*tok; 
-//	t_operand		*next; //(default null)
-//	t_operand		*prev; //(default null)
-	char			*name;
-	t_file			out;
-	t_file			in;
-	char			**args;
-//	char			*opt;
-	char			**env;
-	struct s_list_token	*after;
-	struct s_list_token	*before;
-}					t_list_token;
 
 typedef struct		s_helper{
 		int		i;
@@ -326,20 +271,17 @@ typedef struct		s_helper{
 		int		k;
 		int		index;
 }					t_helper;
-//ls | less
 
 typedef struct s_program {
 		char	**pro_args;
 }				t_program;
 
 
-//execve(ls) out > execve(less) > open(file)
-
-// sh_table.c
-//char			*ft_getenv(char **env,char *nm);
 
 // rm_quoting_in_word.c
 int				remove_quoting_word(char *word,char **env);
+void			case_dquote(t_helper *help, char *cp, char *word);
+void			case_squote(t_helper *help, char *cp, char *word);
 
 // remove_quoting_list.c
 void		change_part_str(char *ori, int start, int end, char *change);
@@ -380,7 +322,7 @@ void			my_here_doc(char *line);
 int				inclu_heredoc(char *new_line);
 
 // here_doc_bse_word.c
-void			my_here_doc_word(t_word *list);
+char				**my_here_doc_word_init_pro_args(t_word *list);
 
 //all_case_redirection.c
 int				all_case_redirection(t_word *list);
@@ -393,8 +335,7 @@ int				err_open_file(t_word *list);
 
 //child_program.c
 void		child_pro_bin(char **paras, char **env, t_sh *table);
-void		child_pro_buildin(t_word *list, char **paras, char **env, t_sh *table);
-void		do_child_pro(t_word *list, char **paras, char **env, t_sh *table);
+void		do_child_pro(char **paras, char **env, t_sh *table);
 char		*path_in_sh(char *app, t_sh *table);
 
 //actions_each_line.c
@@ -407,7 +348,7 @@ int			actions_each_bloc(t_word *list, char ***env, t_sh *table);
 
 //helper_actiond_each_bloc.c
 int			nb_pipe_eachbloc(t_word *list);
-char		**args_each_exev(t_word *list, char **env);
+char		**args_each_exev(t_word *list);
 int			close_all_pipe(int *pipe_fd, int nb_pipe, int nb_pro); // didnt really used this func.
 int			do_all_redirection(t_word *list, int *pipe_fd, int nb_pipe, int nb_pro);
 
@@ -420,6 +361,7 @@ int			pro_is_buildin_no_pipe(t_word *list, char ***env, t_sh *table);
 int			first_buildin_no_pipe(int nb_pipe, t_word *list);
 int			valide_program(char **str, t_sh *table);
 int			put2_str_fd_return(char *str1, char *str2, int fd, int re_value);
+void		put2_str_fd(char *str1, char *str2, int fd);
 
 //recover_fd__buildin.c
 t_save_fd	*fd_restorage(t_word *list, t_save_fd *recover);
@@ -428,7 +370,6 @@ void		free_saver_fd(t_save_fd *recover);
 
 //signal.c
 void		signal_inh(int sign);
-void		signal_quith(int sign);
 
 //my_free.c
 void		ft_freestrstr(char **cp_env);
@@ -438,4 +379,7 @@ void		free_word_list(t_word *list);
 
 //helper.c
 t_table		*malloc_add_sh(void);
+int			replace_home(char *word, char **env);
+void		case_dquote_squote(t_helper *help, char *cp, char *word);
+void		put_strstr(char **str);
 #endif
